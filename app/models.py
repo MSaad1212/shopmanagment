@@ -34,6 +34,18 @@ class AuditLog(Base):
     user = relationship("User", back_populates="audit_logs")
 
 
+class ItemCategory(Base):
+    __tablename__ = "item_categories"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, nullable=False)
+
+
+class ItemType(Base):
+    __tablename__ = "item_types"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, nullable=False)
+
+
 class Item(Base):
     __tablename__ = "items"
 

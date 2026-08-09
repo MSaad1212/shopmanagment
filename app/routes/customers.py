@@ -81,7 +81,7 @@ def create_customer(
         ))
     db.commit()
     log_audit(db, current_user.id, "Create Customer", f"Created {code} — {name}")
-    return RedirectResponse(url="/customers", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/customers", status_code=303)
 
 
 @router.get("/sales", response_class=HTMLResponse)
@@ -157,7 +157,21 @@ async def create_sale(
             return templates.TemplateResponse("customers/sale_form.html", ctx)
 
     invoice_no = next_code(db, Sale, "invoice_no", "SINV")
-    balance = total - amount_received
+    
+    advance_available = Decimal("0")
+    if customer.current_balance < 0:
+        advance_available = abs(money(customer.current_balance))
+    
+    advance_to_adjust = min(total - amount_received, advance_available)
+    if advance_to_adjust < 0:
+        advance_to_adjust = Decimal("0")
+        
+    balance = total - amount_received - advance_to_adjust
+    
+    if advance_to_adjust > 0:
+        adjustment_msg = f"Rs. {advance_to_adjust} adjusted from account credit."
+        note = f"{note} | {adjustment_msg}" if note else adjustment_msg
+
     sale = Sale(
         invoice_no=invoice_no, date=sale_date, customer_id=customer.id,
         total_amount=total, amount_received=amount_received, balance=balance,
@@ -178,7 +192,7 @@ async def create_sale(
 
     db.commit()
     log_audit(db, current_user.id, "Create Sale", f"{invoice_no} total {total}")
-    return RedirectResponse(url=f"/customers/sales/{sale.id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/customers/sales/{sale.id}", status_code=303)
 
 
 @router.get("/sales/{sale_id}", response_class=HTMLResponse)
@@ -221,7 +235,7 @@ async def create_payment(request: Request, current_user: User = Depends(get_curr
     add_customer_ledger(db, customer, pay_date, f"Payment {receipt_no}", credit=amt, reference_type="payment", reference_id=payment.id)
     db.commit()
     log_audit(db, current_user.id, "Customer Payment", f"{receipt_no} amount {amt}")
-    return RedirectResponse(url=f"/customers/{customer.id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/customers/{customer.id}", status_code=303)
 
 
 @router.get("/{customer_id}", response_class=HTMLResponse)
@@ -270,4 +284,4 @@ def update_customer(
     customer.status = status
     db.commit()
     log_audit(db, current_user.id, "Update Customer", f"Updated {customer.customer_code}")
-    return RedirectResponse(url=f"/customers/{customer_id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/customers/{customer_id}", status_code=303)

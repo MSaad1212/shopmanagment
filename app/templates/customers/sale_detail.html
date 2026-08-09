@@ -17,16 +17,38 @@
                     <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Received</p>
                     <p style="font-size: 1.35rem; font-weight: 600; color: var(--success);">Rs. {{ '%.2f'|format(sale.amount_received|float) }}</p>
                 </div>
+                {% set advance_adjusted = sale.total_amount - sale.amount_received - sale.balance %}
+                {% if advance_adjusted > 0 %}
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Account Credit Applied</p>
+                    <p style="font-size: 1.35rem; font-weight: 600; color: var(--success);">Rs. {{ '%.2f'|format(advance_adjusted|float) }}</p>
+                </div>
+                {% endif %}
                 <div>
                     <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Balance</p>
                     <p style="font-size: 1.35rem; font-weight: 600; color: {% if sale.balance < 0 %}var(--error){% else %}var(--text-primary){% endif %};">Rs. {{ '%.2f'|format(sale.balance|float) }}</p>
                 </div>
             </div>
         </div>
-        <div>
-            <a href="/print/sale/{{ sale.id }}" class="btn btn-primary" style="width:auto; padding: 12px 24px;" target="_blank">
-                <i data-lucide="printer" style="width: 18px; height: 18px;"></i>
-                Print Invoice
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+            <a href="/print/sale/{{ sale.id }}?download=1" class="btn btn-secondary" style="width:auto; padding: 10px 16px;">
+                <i data-lucide="download" style="width: 18px; height: 18px; margin-right: 6px;"></i> Download PDF
+            </a>
+            {% set phone = sale.customer.phone|default('', true)|replace(' ', '')|replace('-', '') %}
+            {% if phone.startswith('0') %}
+                {% set wa_phone = '92' ~ phone[1:] %}
+            {% else %}
+                {% set wa_phone = phone %}
+            {% endif %}
+            {% set wa_msg = "Hello " ~ sale.customer.name ~ ", your invoice %23" ~ sale.invoice_no ~ " for Rs. " ~ sale.total_amount ~ " is ready." %}
+            <a href="https://wa.me/{{ wa_phone }}?text={{ wa_msg }}" target="_blank" class="btn btn-secondary" style="width:auto; padding: 10px 16px; border-color: #25D366; color: #25D366;">
+                <i data-lucide="message-circle" style="width: 18px; height: 18px; margin-right: 6px;"></i> WhatsApp
+            </a>
+            <a href="/print/sale-pos/{{ sale.id }}" class="btn btn-secondary" style="width:auto; padding: 10px 16px;" target="_blank" onclick="window.open(this.href, 'pos', 'width=400,height=600'); return false;">
+                <i data-lucide="receipt" style="width: 18px; height: 18px; margin-right: 6px;"></i> POS80 Print
+            </a>
+            <a href="/print/sale/{{ sale.id }}" class="btn btn-primary" style="width:auto; padding: 10px 16px;" target="_blank">
+                <i data-lucide="printer" style="width: 18px; height: 18px; margin-right: 6px;"></i> A4 Print
             </a>
         </div>
     </div>

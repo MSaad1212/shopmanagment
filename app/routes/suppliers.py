@@ -76,7 +76,7 @@ def create_supplier(
         ))
     db.commit()
     log_audit(db, current_user.id, "Create Supplier", f"Created {code} — {name}")
-    return RedirectResponse(url="/suppliers", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/suppliers", status_code=303)
 
 
 @router.get("/purchases", response_class=HTMLResponse)
@@ -163,7 +163,7 @@ async def create_purchase(
 
     db.commit()
     log_audit(db, current_user.id, "Create Purchase", f"{invoice_no} total {total}")
-    return RedirectResponse(url=f"/suppliers/purchases/{purchase.id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/suppliers/purchases/{purchase.id}", status_code=303)
 
 
 @router.get("/purchases/{purchase_id}", response_class=HTMLResponse)
@@ -211,7 +211,7 @@ async def create_payment(
     add_supplier_ledger(db, supplier, pay_date, f"Payment {payment_no}", credit=amt, reference_type="payment", reference_id=payment.id)
     db.commit()
     log_audit(db, current_user.id, "Supplier Payment", f"{payment_no} amount {amt}")
-    return RedirectResponse(url=f"/suppliers/{supplier.id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/suppliers/{supplier.id}", status_code=303)
 
 
 @router.get("/{supplier_id}", response_class=HTMLResponse)
@@ -259,4 +259,4 @@ def update_supplier(
     supplier.status = status
     db.commit()
     log_audit(db, current_user.id, "Update Supplier", f"Updated {supplier.supplier_code}")
-    return RedirectResponse(url=f"/suppliers/{supplier_id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/suppliers/{supplier_id}", status_code=303)

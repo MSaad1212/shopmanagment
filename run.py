@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from app.database import engine, Base, SessionLocal
 from app.models import User
 from app.auth import hash_password
-from app.routes import auth, dashboard, stock, suppliers, customers, returns, ledger_reports, print_pdf
+from app.routes import auth, dashboard, stock, suppliers, customers, returns, ledger_reports, print_pdf, settings
 from app.services import ensure_walk_in_customer
 
 load_dotenv()
@@ -34,6 +34,16 @@ try:
         db.commit()
         print("Default admin user created (admin / admin123).")
     ensure_walk_in_customer(db)
+    
+    from app.models import ItemCategory, ItemType
+    from app.services import CATEGORIES, ITEM_TYPES
+    if not db.query(ItemCategory).first():
+        for cat in CATEGORIES:
+            db.add(ItemCategory(name=cat))
+    if not db.query(ItemType).first():
+        for t in ITEM_TYPES:
+            db.add(ItemType(name=t))
+            
     db.commit()
 except Exception as e:
     print(f"Error seeding database: {e}")
@@ -59,6 +69,7 @@ app.include_router(customers.router)
 app.include_router(returns.router)
 app.include_router(ledger_reports.router)
 app.include_router(print_pdf.router)
+app.include_router(settings.router)
 
 if __name__ == "__main__":
     host = os.getenv("HOST", "127.0.0.1")

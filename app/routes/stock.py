@@ -5,9 +5,9 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import User, Item, StockMovement
+from app.models import User, Item, StockMovement, ItemCategory, ItemType
 from app.auth import get_current_user, log_audit
-from app.services import next_code, apply_stock_change, CATEGORIES, TYRE_TYPES, money
+from app.services import next_code, apply_stock_change, money
 
 router = APIRouter(prefix="/stock", tags=["stock"])
 templates = Jinja2Templates(directory="app/templates")
@@ -41,11 +41,12 @@ def list_items(
 
     items = query.order_by(Item.item_code).all()
     brands = [r[0] for r in db.query(Item.brand).distinct().order_by(Item.brand).all() if r[0]]
+    categories = [c.name for c in db.query(ItemCategory).order_by(ItemCategory.name).all()]
     return templates.TemplateResponse("stock/list.html", {
         "request": request,
         "current_user": current_user,
         "items": items,
-        "categories": CATEGORIES,
+        "categories": categories,
         "brands": brands,
         "filters": {"q": q, "brand": brand, "category": category, "low_stock": low_stock},
         "active_tab": "stock",
@@ -64,10 +65,12 @@ def low_stock_report(request: Request, current_user: User = Depends(get_current_
 
 
 @router.get("/new", response_class=HTMLResponse)
-def new_item_form(request: Request, current_user: User = Depends(get_current_user)):
+def new_item_form(request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    categories = [c.name for c in db.query(ItemCategory).order_by(ItemCategory.name).all()]
+    types = [t.name for t in db.query(ItemType).order_by(ItemType.name).all()]
     return templates.TemplateResponse("stock/form.html", {
         "request": request, "current_user": current_user, "item": None,
-        "categories": CATEGORIES, "types": TYRE_TYPES, "active_tab": "stock",
+        "categories": categories, "types": types, "active_tab": "stock",
         "error": None, "success": None,
     })
 
@@ -106,7 +109,7 @@ def create_item(
     db.add(item)
     db.commit()
     log_audit(db, current_user.id, "Create Item", f"Created item {code} — {brand}")
-    return RedirectResponse(url="/stock", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/stock", status_code=303)
 
 
 @router.get("/{item_id}", response_class=HTMLResponse)
@@ -126,9 +129,11 @@ def edit_item_form(item_id: int, request: Request, current_user: User = Depends(
     item = db.query(Item).filter(Item.id == item_id).first()
     if not item:
         raise HTTPException(404, "Item not found")
+    categories = [c.name for c in db.query(ItemCategory).order_by(ItemCategory.name).all()]
+    types = [t.name for t in db.query(ItemType).order_by(ItemType.name).all()]
     return templates.TemplateResponse("stock/form.html", {
         "request": request, "current_user": current_user, "item": item,
-        "categories": CATEGORIES, "types": TYRE_TYPES, "active_tab": "stock",
+        "categories": categories, "types": types, "active_tab": "stock",
         "error": None, "success": None,
     })
 
@@ -165,7 +170,7 @@ def update_item(
     item.status = status
     db.commit()
     log_audit(db, current_user.id, "Update Item", f"Updated item {item.item_code}")
-    return RedirectResponse(url=f"/stock/{item_id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/stock/{item_id}", status_code=303)
 
 
 @router.get("/{item_id}/adjust", response_class=HTMLResponse)
@@ -208,4 +213,4 @@ def adjust_stock(
             "request": request, "current_user": current_user, "item": item,
             "active_tab": "stock", "error": str(e), "success": None,
         })
-    return RedirectResponse(url=f"/stock/{item_id}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/stock/{item_id}", status_code=303)

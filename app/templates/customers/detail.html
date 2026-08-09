@@ -17,8 +17,16 @@
             
             <div style="display: flex; gap: 32px; margin-top: 24px;">
                 <div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Balance Due</p>
-                    <p style="font-size: 1.35rem; font-weight: 700; color: {% if customer.current_balance > 0 %}var(--error){% else %}var(--text-primary){% endif %};">Rs. {{ '%.2f'|format(customer.current_balance|float) }}</p>
+                    {% if customer.current_balance > 0 %}
+                        <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Balance Due (Credit)</p>
+                        <p style="font-size: 1.35rem; font-weight: 700; color: var(--error);">Rs. {{ '%.2f'|format(customer.current_balance|float) }}</p>
+                    {% elif customer.current_balance < 0 %}
+                        <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Account Credit</p>
+                        <p style="font-size: 1.35rem; font-weight: 700; color: var(--success);">Rs. {{ '%.2f'|format(customer.current_balance|abs|float) }}</p>
+                    {% else %}
+                        <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Account Status</p>
+                        <p style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary);">Settled (Rs. 0.00)</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

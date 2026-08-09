@@ -144,7 +144,7 @@ async def create_supplier_return(request: Request, current_user: User = Depends(
     add_supplier_ledger(db, supplier, ret_date, f"Return {return_no}", credit=total, reference_type="supplier_return", reference_id=ret.id)
     db.commit()
     log_audit(db, current_user.id, "Supplier Return", f"{return_no} total {total}")
-    return RedirectResponse(url=f"/returns?day={ret_date.isoformat()}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/returns?day={ret_date.isoformat()}", status_code=303)
 
 
 @router.get("/customer/new", response_class=HTMLResponse)
@@ -211,4 +211,4 @@ async def create_customer_return(request: Request, current_user: User = Depends(
         add_customer_ledger(db, customer, ret_date, f"Return {return_no}", credit=total, reference_type="customer_return", reference_id=ret.id)
     db.commit()
     log_audit(db, current_user.id, "Customer Return", f"{return_no} total {total}")
-    return RedirectResponse(url=f"/returns?day={ret_date.isoformat()}", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url=f"/returns?day={ret_date.isoformat()}", status_code=303)

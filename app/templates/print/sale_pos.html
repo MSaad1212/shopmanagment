@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Receipt {{ sale.invoice_no }}</title>
+    <style>
+        @page {
+            margin: 0;
+            size: 80mm auto;
+        }
+        * {
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        body {
+            width: 80mm;
+            margin: 0;
+            padding: 4mm;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #000;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .text-left { text-align: left; }
+        .font-bold { font-weight: bold; }
+        
+        .header { margin-bottom: 10px; }
+        .header h1 { font-size: 16px; margin: 0 0 2px; }
+        .header p { margin: 0; font-size: 12px; }
+        
+        .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
+        .solid-divider { border-bottom: 1px solid #000; margin: 8px 0; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 2px 0; vertical-align: top; }
+        th { border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 4px; }
+        
+        .totals-table { margin-top: 8px; width: 100%; }
+        .totals-table td { padding: 2px 0; }
+        .grand-total { font-size: 14px; font-weight: bold; }
+        
+        .footer { text-align: center; margin-top: 15px; font-size: 11px; }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="header">
+        <img src="/static/img/gas.png" alt="Logo" style="width: 48px; height: 48px; object-fit: contain; margin-bottom: 4px;">
+        <h2 class="store-name">{{ shop_name }}</h2>
+        <p>{{ shop_tagline }}</p>
+    </div>
+    
+    <div class="text-left">
+        <div><span class="font-bold">Invoice:</span> #{{ sale.invoice_no }}</div>
+        <div><span class="font-bold">Date:</span> {{ sale.date }}</div>
+        <div><span class="font-bold">Customer:</span> {{ sale.customer.name }}</div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th class="text-left">Item</th>
+                <th class="text-right">Qty</th>
+                <th class="text-right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in sale.items %}
+            <tr>
+                <td class="text-left">
+                    {{ line.item.item_code }}<br>
+                    <small>{{ line.unit_price|float }}</small>
+                </td>
+                <td class="text-right">{{ line.quantity }}</td>
+                <td class="text-right">{{ line.subtotal|float }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="solid-divider"></div>
+    
+    <table class="totals-table">
+        <tr>
+            <td class="text-left">Subtotal</td>
+            <td class="text-right">{{ sale.total_amount|float }}</td>
+        </tr>
+        <tr>
+            <td class="text-left">Received</td>
+            <td class="text-right">{{ sale.amount_received|float }}</td>
+        </tr>
+        {% set advance_adjusted = sale.total_amount - sale.amount_received - sale.balance %}
+        {% if advance_adjusted > 0 %}
+        <tr>
+            <td class="text-left">Account Credit</td>
+            <td class="text-right">{{ advance_adjusted|float }}</td>
+        </tr>
+        {% endif %}
+        <tr class="grand-total">
+            <td class="text-left">Balance Due</td>
+            <td class="text-right">{{ sale.balance|float }}</td>
+        </tr>
+    </table>
+    
+    <div class="divider"></div>
+    
+    <div class="footer">
+        Thank you for your business!<br>
+        <small>System generated receipt.</small>
+    </div>
+</body>
+</html>

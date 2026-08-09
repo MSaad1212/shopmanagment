@@ -8,6 +8,8 @@ from urllib.parse import urlparse
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://root:@localhost:3306/tyre_shop")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 try:
     url = urlparse(DATABASE_URL)

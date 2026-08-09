@@ -16,8 +16,8 @@ from app.services import money
 router = APIRouter(prefix="/print", tags=["print"])
 templates = Jinja2Templates(directory="app/templates")
 
-SHOP_NAME = "Business System"
-SHOP_TAGLINE = "Professional Tyre & Auto Parts"
+SHOP_NAME = "Newmetro"
+SHOP_TAGLINE = "Car Gas Kit Parts | WhatsApp: 0331-9542475"
 
 _weasy_html = None
 _weasy_tried = False
@@ -37,13 +37,21 @@ def _get_weasy():
     return _weasy_html
 
 
-def render_pdf(request: Request, template_name: str, context: dict):
+def render_pdf(request: Request, template_name: str, context: dict, filename_prefix: str = "document"):
+    if "today" not in context:
+        context["today"] = date.today().strftime("%d-%b-%Y").lower()
+        
     html_str = templates.get_template(template_name).render({**context, "request": request})
     WeasyHTML = _get_weasy()
     if WeasyHTML is not None:
         try:
             pdf = WeasyHTML(string=html_str, base_url=str(request.base_url)).write_pdf()
-            return Response(content=pdf, media_type="application/pdf")
+            headers = {}
+            if request.query_params.get("download") == "1":
+                headers["Content-Disposition"] = f'attachment; filename="{filename_prefix}.pdf"'
+            else:
+                headers["Content-Disposition"] = 'inline'
+            return Response(content=pdf, media_type="application/pdf", headers=headers)
         except Exception as e:
             print(f"WeasyPrint PDF failed ({e}); falling back to HTML.")
     return HTMLResponse(content=html_str)
@@ -56,7 +64,18 @@ def print_sale(sale_id: int, request: Request, current_user: User = Depends(get_
         raise HTTPException(404)
     return render_pdf(request, "print/sale.html", {
         "sale": sale, "shop_name": SHOP_NAME, "shop_tagline": SHOP_TAGLINE,
+    }, filename_prefix=f"Invoice_{sale.invoice_no}")
+
+@router.get("/sale-pos/{sale_id}")
+def print_sale_pos(sale_id: int, request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    sale = db.query(Sale).options(joinedload(Sale.customer), joinedload(Sale.items).joinedload(SaleItem.item)).filter(Sale.id == sale_id).first()
+    if not sale:
+        raise HTTPException(404)
+    html_str = templates.get_template("print/sale_pos.html").render({
+        "sale": sale, "shop_name": SHOP_NAME, "shop_tagline": SHOP_TAGLINE,
+        "today": date.today().strftime("%d-%b-%Y").lower(), "request": request
     })
+    return HTMLResponse(content=html_str)
 
 
 @router.get("/purchase/{purchase_id}")

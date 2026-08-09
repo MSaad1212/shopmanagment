@@ -1,85 +1,347 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>Sale Invoice {{ sale.invoice_no }}</title>
-<style>
-@page {
-    size: A4;
-    margin: 15mm;
-    @bottom-center {
-        content: "Thank you for your business! - Page " counter(page) " of " counter(pages);
-        font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        font-size: 10px;
-        color: #64748b;
-    }
-}
-body {
-    font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    font-size: 13px;
-    color: #334155;
-    line-height: 1.6;
-    margin: 0;
-    background: #fff;
-}
-.invoice-wrapper {
-    max-width: 100%;
-    margin: 0 auto;
-}
-.header-table { width: 100%; margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; }
-.header-table td { vertical-align: top; }
-.company-name { font-size: 26px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0; text-transform: uppercase; letter-spacing: -0.5px; }
-.tagline { color: #64748b; font-size: 13px; margin: 0; }
-.doc-title { font-size: 24px; font-weight: 700; color: #3b82f6; text-align: right; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; }
-.meta-table { float: right; border-collapse: separate; border-spacing: 0; border-radius: 6px; overflow: hidden; border: 1px solid #e2e8f0; }
-.meta-table td { padding: 6px 16px; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
-.meta-table tr:last-child td { border-bottom: none; }
-.meta-table td.label { font-weight: 600; background-color: #f8fafc; color: #475569; border-right: 1px solid #e2e8f0; }
-.bill-to { margin-bottom: 35px; background: #f8fafc; padding: 15px; border-left: 4px solid #3b82f6; border-radius: 0 6px 6px 0; }
-.bill-to h3 { font-size: 12px; color: #64748b; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-.bill-to p { margin: 0 0 3px 0; font-size: 15px; font-weight: 700; color: #0f172a; }
-.bill-to span { display: block; font-weight: 400; color: #475569; font-size: 13px; margin-top: 2px; }
-.items-table { width: 100%; border-collapse: collapse; margin-bottom: 35px; border-radius: 6px; overflow: hidden; }
-.items-table th, .items-table td { border-bottom: 1px solid #e2e8f0; padding: 14px 12px; text-align: left; }
-.items-table th { background-color: #f1f5f9; color: #334155; font-weight: 700; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #cbd5e1; letter-spacing: 0.5px; }
-.items-table td { color: #1e293b; vertical-align: middle; }
-.items-table tbody tr:nth-child(even) { background-color: #f8fafc; }
-.right { text-align: right !important; }
-.totals-wrapper { width: 100%; display: flex; justify-content: flex-end; page-break-inside: avoid; }
-.totals-table { width: 340px; border-collapse: collapse; float: right; }
-.totals-table td { padding: 10px 16px; font-size: 14px; border-bottom: 1px solid #e2e8f0; color: #475569; }
-.totals-table tr.total-row td { font-weight: 700; font-size: 16px; color: #0f172a; border-top: 2px solid #cbd5e1; background-color: #f8fafc; }
-.totals-table tr.balance-row td { font-weight: 700; font-size: 17px; color: #dc2626; background-color: #fef2f2; border-bottom: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
-.clearfix::after { content: ""; clear: both; display: table; }
-.footer { margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center; color: #64748b; font-size: 12px; }
-</style>
+    <meta charset="utf-8">
+    <title>Sale Invoice {{ sale.invoice_no }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 16mm 18mm 20mm;
+
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: 'Inter', sans-serif;
+                font-size: 8pt;
+                color: #94a3b8;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5pt;
+            color: #1e293b;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            width: 174mm;
+        }
+
+        /* Prevent awkward breaks when the ledger spans multiple A4 pages */
+        table.items thead {
+            display: table-header-group;
+        }
+
+        table.items tr {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .header,
+        .party-panel {
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+
+        .summary-block {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 18px;
+            margin-bottom: 8px;
+            border-bottom: 3px solid #0f172a;
+        }
+
+        .shop-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16pt;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+        }
+
+        .shop-info h1 {
+            font-size: 19pt;
+            font-weight: 800;
+            margin: 0 0 2px;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .shop-info .sub {
+            color: #64748b;
+            font-size: 9pt;
+        }
+
+        .document-title {
+            text-align: right;
+            padding-top: 2px;
+        }
+
+        .document-title h2 {
+            font-size: 15pt;
+            font-weight: 700;
+            color: #4f46e5;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .document-title .meta {
+            color: #64748b;
+            font-size: 9pt;
+        }
+
+        .document-title .doc-id {
+            color: #0f172a;
+            font-size: 9.5pt;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .party-panel {
+            display: flex;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #4f46e5;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 22px 0 26px;
+        }
+
+        .party-info .eyebrow,
+        .balance-preview .eyebrow {
+            color: #94a3b8;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin: 0 0 5px;
+        }
+
+        .party-name {
+            font-size: 13pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 3px;
+        }
+
+        .party-info .sub-line {
+            color: #64748b;
+            font-size: 9.5pt;
+            margin: 0;
+        }
+
+        .balance-preview {
+            text-align: right;
+        }
+
+        .balance-preview .amount {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+        }
+
+        table.items th {
+            background-color: #0f172a;
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            text-align: left;
+            padding: 10px 12px;
+        }
+
+        table.items th.right {
+            text-align: right;
+        }
+
+        table.items th.center {
+            text-align: center;
+        }
+
+        table.items td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #eef1f5;
+            font-size: 9.5pt;
+            vertical-align: middle;
+        }
+
+        table.items tbody tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        table.items tbody tr:last-child td {
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .right {
+            text-align: right !important;
+        }
+
+        .center {
+            text-align: center !important;
+        }
+
+        .amt-debit {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .amt-credit {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .amt-balance {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .dash {
+            color: #cbd5e1;
+        }
+
+        .empty-state {
+            padding: 48px 20px;
+            color: #94a3b8;
+            font-style: italic;
+            text-align: center;
+            font-size: 9.5pt;
+        }
+
+        .summary-block {
+            margin-top: 26px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .summary-card {
+            min-width: 280px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .summary-card .balance-label {
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 8.5pt;
+            letter-spacing: 0.6px;
+        }
+
+        .summary-card .balance-value {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .summary-table {
+            width: 320px;
+            border-collapse: collapse;
+        }
+
+        .summary-table td {
+            padding: 10px 14px;
+            font-size: 10.5pt;
+            color: #475569;
+            border-bottom: 1px solid #eef1f5;
+        }
+
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-table tr.total-row td {
+            color: #0f172a;
+            font-weight: 700;
+            border-top: 2px solid #cbd5e1;
+        }
+
+        .summary-table tr.balance-row td {
+            color: #ffffff;
+            background: #0f172a;
+            font-size: 13pt;
+            font-weight: 800;
+        }
+
+        .footer-note {
+            margin-top: 34px;
+            padding-top: 14px;
+            border-top: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 8pt;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
-<div class="invoice-wrapper">
-    <table class="header-table">
-        <tr>
-            <td>
-                <h1 class="company-name">{{ shop_name }}</h1>
-                <p class="tagline">{{ shop_tagline }}</p>
-            </td>
-            <td>
-                <h2 class="doc-title">Tax Invoice</h2>
-                <table class="meta-table">
-                    <tr><td class="label">Invoice No.</td><td class="right">#{{ sale.invoice_no }}</td></tr>
-                    <tr><td class="label">Issue Date</td><td class="right">{{ sale.date }}</td></tr>
-                </table>
-            </td>
-        </tr>
-    </table>
 
-    <div class="bill-to">
-        <h3>Billed To</h3>
-        <p>{{ sale.customer.name }}</p>
-        {% if sale.customer.phone %}<span><strong>Phone:</strong> {{ sale.customer.phone }}</span>{% endif %}
-        {% if sale.customer.address %}<span><strong>Address:</strong> {{ sale.customer.address }}</span>{% endif %}
+    <div class="header">
+        <div class="shop-info">
+            <img src="/static/img/gas.png" alt="Logo" class="logo-mark" style="background: none; color: transparent; border-radius: 0; object-fit: contain;">
+            <div>
+                <h1>{{ shop_name }}</h1>
+                <div class="sub">{{ shop_tagline }}</div>
+            </div>
+        </div>
+        <div class="document-title">
+            <!-- <h2>Tax Invoice</h2> -->
+            <div class="meta">Issue Date: {{ sale.date }}</div>
+            <div class="doc-id">Invoice No: #{{ sale.invoice_no }}</div>
+        </div>
     </div>
-
-    <table class="items-table">
+    <div class="party-panel">
+        <div class="party-info">
+            <p class="eyebrow">Billed To</p>
+            <p class="party-name">{{ sale.customer.name }}</p>
+            {% if sale.customer.phone %}<p class="sub-line">Phone: {{ sale.customer.phone }}</p>{% endif %}
+            {% if sale.customer.address %}<p class="sub-line">Address: {{ sale.customer.address }}</p>{% endif %}
+        </div>
+        <div class="balance-preview">
+            <p class="eyebrow">Amount Due</p>
+            <div class="amount">Rs. {{ '%.2f'|format(sale.balance|float) }}</div>
+        </div>
+    </div>
+    <table class="items">
         <thead>
             <tr>
                 <th>Item Description</th>
@@ -91,18 +353,20 @@ body {
         <tbody>
             {% for line in sale.items %}
             <tr>
-                <td><strong>{{ line.item.item_code }}</strong><br><span style="color:#64748b; font-size:12px;">{{ line.item.brand }}{% if line.item.size %} &bull; {{ line.item.size }}{% endif %}</span></td>
+                <td style="font-weight: 500; color: #0f172a;">{{ line.item.item_code }}
+                    <div style="color: #64748b; font-size: 8.5pt; font-weight: 400; margin-top: 2px;">{{ line.item.brand
+                        }}{% if line.item.size %} &bull; {{ line.item.size }}{% endif %}</div>
+                </td>
                 <td class="right">{{ line.quantity }}</td>
                 <td class="right">Rs. {{ '%.2f'|format(line.unit_price|float) }}</td>
-                <td class="right" style="font-weight: 600; color: #0f172a;">Rs. {{ '%.2f'|format(line.subtotal|float) }}</td>
+                <td class="right amt-balance">Rs. {{ '%.2f'|format(line.subtotal|float) }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="clearfix">
-        <table class="totals-table">
-            <tr class="total-row">
+    <div class="summary-block">
+        <table class="summary-table">
+            <tr>
                 <td>Subtotal</td>
                 <td class="right">Rs. {{ '%.2f'|format(sale.total_amount|float) }}</td>
             </tr>
@@ -110,16 +374,39 @@ body {
                 <td>Amount Received</td>
                 <td class="right">Rs. {{ '%.2f'|format(sale.amount_received|float) }}</td>
             </tr>
+            {% set advance_adjusted = sale.total_amount - sale.amount_received - sale.balance %}
+            {% if advance_adjusted > 0 %}
+            <tr>
+                <td>Account Credit Applied</td>
+                <td class="right" style="color: #059669; font-weight: 500;">Rs. {{ '%.2f'|format(advance_adjusted|float)
+                    }}</td>
+            </tr>
+            {% endif %}
             <tr class="balance-row">
-                <td>Balance Due</td>
-                <td class="right">Rs. {{ '%.2f'|format(sale.balance|float) }}</td>
+                <td style="border-radius: 8px 0 0 8px;">Balance Due</td>
+                <td class="right" style="border-radius: 0 8px 8px 0;">Rs. {{ '%.2f'|format(sale.balance|float) }}</td>
             </tr>
         </table>
     </div>
+    <div class="footer-note">{{ shop_name }} &middot; This is a system-generated invoice and does not require a
+        signature.</div>
 
-    <div class="footer">
-        <p>This is a computer-generated document. No signature is required.</p>
-    </div>
-</div>
+    {% if request.query_params.get("download") == "1" %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        window.onload = function () {
+            var element = document.body;
+            var opt = {
+                margin: 15,
+                filename: 'Invoice_{{ sale.invoice_no }}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        };
+    </script>
+    {% endif %}
 </body>
+
 </html>

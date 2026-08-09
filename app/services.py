@@ -130,9 +130,9 @@ def ensure_walk_in_customer(db: Session) -> Customer:
 
 
 CATEGORIES = [
-    "Car tyre", "Bike tyre", "Truck tyre", "Tube", "Rim", "Accessory"
+    "Gas Kit", "Cylinder", "Valve", "Pipes", "Fittings", "Accessory", "Other"
 ]
-TYRE_TYPES = ["Tubeless", "Tube-type"]
+ITEM_TYPES = ["New", "Used", "Refurbished"]
 PAYMENT_METHODS = ["Cash", "Bank Transfer", "Cheque"]
 REFUND_METHODS = ["Cash", "Adjusted against balance"]
 RETURN_REASONS = ["Defective", "Wrong size", "Changed mind", "Other"]

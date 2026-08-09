@@ -1,154 +1,371 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title>{{ title }}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-@page { size: A4; margin: 20mm; }
-body { 
-    font-family: 'Inter', sans-serif; 
-    font-size: 11pt; 
-    color: #1e293b; 
-    line-height: 1.5;
-}
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 20px;
-    margin-bottom: 30px;
-}
-.shop-info h1 { 
-    font-size: 24pt; 
-    font-weight: 700;
-    margin: 0 0 4px; 
-    color: #0f172a;
-    letter-spacing: -0.5px;
-}
-.shop-info .sub { 
-    color: #64748b; 
-    font-size: 10pt;
-}
-.document-title {
-    text-align: right;
-}
-.document-title h2 {
-    font-size: 18pt;
-    font-weight: 600;
-    color: #4f46e5;
-    margin: 0 0 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.party-info {
-    margin-bottom: 30px;
-}
-.party-info p {
-    margin: 4px 0;
-}
-.party-name {
-    font-size: 14pt;
-    font-weight: 600;
-    color: #0f172a;
-}
-table.items { 
-    width: 100%; 
-    border-collapse: collapse; 
-    margin-top: 10px; 
-}
-table.items th, table.items td { 
-    padding: 12px 10px; 
-    border-bottom: 1px solid #e2e8f0;
-    vertical-align: middle;
-}
-table.items th { 
-    background-color: #f8fafc;
-    color: #475569;
-    font-weight: 600;
-    font-size: 9pt;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-top: 1px solid #cbd5e1;
-    border-bottom: 2px solid #cbd5e1;
-    text-align: left;
-}
-.right { text-align: right !important; }
-.center { text-align: center !important; }
-table.items td {
-    font-size: 10pt;
-}
-.summary {
-    margin-top: 30px;
-    text-align: right;
-    font-size: 12pt;
-}
-.summary .balance-label {
-    color: #64748b;
-    margin-right: 16px;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 9pt;
-    letter-spacing: 0.5px;
-}
-.summary .balance-value {
-    font-size: 16pt;
-    font-weight: 700;
-    color: #0f172a;
-}
-</style>
+    <meta charset="utf-8">
+    <title>{{ title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4;
+            margin: 16mm 18mm 20mm;
+
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: 'Inter', sans-serif;
+                font-size: 8pt;
+                color: #94a3b8;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 10.5pt;
+            color: #1e293b;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            width: 174mm;
+            /* A4 width minus 18mm side margins, keeps layout predictable */
+        }
+
+        /* Prevent awkward breaks when the ledger spans multiple A4 pages */
+        table.items thead {
+            display: table-header-group;
+        }
+
+        table.items tr {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .header,
+        .party-panel {
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+
+        .summary-block {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 18px;
+            margin-bottom: 8px;
+            border-bottom: 3px solid #0f172a;
+        }
+
+        .shop-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #4f46e5, #4338ca);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16pt;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+        }
+
+        .shop-info h1 {
+            font-size: 19pt;
+            font-weight: 800;
+            margin: 0 0 2px;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+
+        .shop-info .sub {
+            color: #64748b;
+            font-size: 9pt;
+        }
+
+        .document-title {
+            text-align: right;
+            padding-top: 2px;
+        }
+
+        .document-title h2 {
+            font-size: 15pt;
+            font-weight: 700;
+            color: #4f46e5;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .document-title .meta {
+            color: #64748b;
+            font-size: 9pt;
+        }
+
+        .document-title .doc-id {
+            color: #0f172a;
+            font-size: 9.5pt;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        /* ---------- Account panel ---------- */
+        .party-panel {
+            display: flex;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid #4f46e5;
+            border-radius: 6px;
+            padding: 14px 18px;
+            margin: 22px 0 26px;
+        }
+
+        .party-info .eyebrow {
+            color: #94a3b8;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin: 0 0 5px;
+        }
+
+        .party-name {
+            font-size: 13pt;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 3px;
+        }
+
+        .party-info .sub-line {
+            color: #64748b;
+            font-size: 9.5pt;
+            margin: 0;
+        }
+
+        .party-panel .balance-preview {
+            text-align: right;
+        }
+
+        .party-panel .balance-preview .eyebrow {
+            color: #94a3b8;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+            margin: 0 0 5px;
+        }
+
+        .party-panel .balance-preview .amount {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        /* ---------- Table ---------- */
+        table.items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 4px;
+        }
+
+        table.items th {
+            background-color: #0f172a;
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            text-align: left;
+            padding: 10px 12px;
+        }
+
+        table.items th.right {
+            text-align: right;
+        }
+
+        table.items th.center {
+            text-align: center;
+        }
+
+        table.items td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #eef1f5;
+            font-size: 9.5pt;
+            vertical-align: middle;
+        }
+
+        table.items tbody tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+
+        table.items tbody tr:last-child td {
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .right {
+            text-align: right !important;
+        }
+
+        .center {
+            text-align: center !important;
+        }
+
+        .amt-debit {
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        .amt-credit {
+            color: #059669;
+            font-weight: 500;
+        }
+
+        .amt-balance {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .dash {
+            color: #cbd5e1;
+        }
+
+        .empty-state {
+            padding: 48px 20px;
+            color: #94a3b8;
+            font-style: italic;
+            text-align: center;
+            font-size: 9.5pt;
+        }
+
+        /* ---------- Summary ---------- */
+        .summary-block {
+            margin-top: 26px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .summary-card {
+            min-width: 280px;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .summary-card .balance-label {
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 8.5pt;
+            letter-spacing: 0.6px;
+        }
+
+        .summary-card .balance-value {
+            font-size: 15pt;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* ---------- Footer note ---------- */
+        .footer-note {
+            margin-top: 34px;
+            padding-top: 14px;
+            border-top: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-size: 8pt;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="header">
-    <div class="shop-info">
-        <h1>{{ shop_name }}</h1>
-        <div class="sub">{{ shop_tagline }}</div>
+    <div class="header">
+        <div class="shop-info">
+            <div class="logo-mark">{{ shop_initials | default(shop_name[0] | default("S")) }}</div>
+            <div>
+                <h1>{{ shop_name }}</h1>
+                <div class="sub">{{ shop_tagline }}</div>
+            </div>
+        </div>
+        <div class="document-title">
+            <h2>{{ title }}</h2>
+            <div class="meta">Generated on {{ today | default("Today") }}</div>
+            {% if doc_number %}<div class="doc-id">Ref: {{ doc_number }}</div>{% endif %}
+        </div>
     </div>
-    <div class="document-title">
-        <h2>{{ title }}</h2>
-        <div style="color: #64748b; font-size: 10pt;">Generated on {{ today | default("Today") }}</div>
+
+    <div class="party-panel">
+        <div class="party-info">
+            <p class="eyebrow">Account Details</p>
+            <p class="party-name">{{ party_name }}</p>
+            <p class="sub-line">Account ID: {{ party_code }}</p>
+        </div>
+        <div class="balance-preview">
+            <p class="eyebrow">Current Balance</p>
+            <div class="amount">Rs. {{ '%.2f'|format(balance|float) }}</div>
+        </div>
     </div>
-</div>
 
-<div class="party-info">
-    <p style="color: #64748b; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Account Details</p>
-    <p class="party-name">{{ party_name }}</p>
-    <p style="color: #475569;">Account ID: {{ party_code }}</p>
-</div>
+    <table class="items">
+        <thead>
+            <tr>
+                <th style="width: 15%;">Date</th>
+                <th style="width: 40%;">Description</th>
+                <th class="right" style="width: 15%;">Debit</th>
+                <th class="right" style="width: 15%;">Credit</th>
+                <th class="right" style="width: 15%;">Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in ledger %}
+            <tr>
+                <td style="color: #475569;">{{ e.date }}</td>
+                <td style="font-weight: 500; color: #0f172a;">{{ e.description }}</td>
+                <td class="right">{% if e.debit %}<span class="amt-debit">{{ '%.2f'|format(e.debit|float) }}</span>{%
+                    else %}<span class="dash">—</span>{% endif %}</td>
+                <td class="right">{% if e.credit %}<span class="amt-credit">{{ '%.2f'|format(e.credit|float) }}</span>{%
+                    else %}<span class="dash">—</span>{% endif %}</td>
+                <td class="right amt-balance">{{ '%.2f'|format(e.balance|float) }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="empty-state">No transactions recorded for this account.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<table class="items">
-    <thead>
-        <tr>
-            <th style="width: 15%;">Date</th>
-            <th style="width: 40%;">Description</th>
-            <th class="right" style="width: 15%;">Debit</th>
-            <th class="right" style="width: 15%;">Credit</th>
-            <th class="right" style="width: 15%;">Balance</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for e in ledger %}
-    <tr>
-        <td style="color: #475569;">{{ e.date }}</td>
-        <td style="font-weight: 500;">{{ e.description }}</td>
-        <td class="right" style="color: #ef4444;">{% if e.debit %}{{ '%.2f'|format(e.debit|float) }}{% else %}—{% endif %}</td>
-        <td class="right" style="color: #10b981;">{% if e.credit %}{{ '%.2f'|format(e.credit|float) }}{% else %}—{% endif %}</td>
-        <td class="right" style="font-weight: 600;">{{ '%.2f'|format(e.balance|float) }}</td>
-    </tr>
-    {% else %}
-    <tr>
-        <td colspan="5" class="center" style="padding: 40px; color: #94a3b8; font-style: italic;">No transactions recorded for this account.</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+    <div class="summary-block">
+        <div class="summary-card">
+            <span class="balance-label">Closing Balance</span>
+            <span class="balance-value">Rs. {{ '%.2f'|format(balance|float) }}</span>
+        </div>
+    </div>
 
-<div class="summary">
-    <span class="balance-label">Closing Balance</span>
-    <span class="balance-value">Rs. {{ '%.2f'|format(balance|float) }}</span>
-</div>
+    <div class="footer-note">{{ shop_name }} &middot; This is a system-generated statement and does not require a
+        signature.</div>
 
 </body>
+
 </html>

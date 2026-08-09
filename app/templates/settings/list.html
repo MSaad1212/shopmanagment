@@ -1,0 +1,109 @@
+{% extends "dashboard.html" %}
+{% block title %}Settings — Newmetro{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>System Settings</h2>
+</div>
+
+{% if error %}
+<div class="alert alert-danger" style="margin-bottom: 20px;">
+    {{ error }}
+</div>
+{% endif %}
+{% if success %}
+<div class="alert alert-success" style="margin-bottom: 20px;">
+    {{ success }}
+</div>
+{% endif %}
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+    
+    <!-- Categories -->
+    <div class="panel">
+        <h3 style="margin-bottom:16px;">Item Categories</h3>
+        
+        <form method="post" action="/settings/categories/add" style="display:flex; gap:12px; margin-bottom: 20px;">
+            <input type="text" name="name" class="form-control" placeholder="New Category Name" required style="flex:1;">
+            <button type="submit" class="btn btn-primary" style="width:auto;"><i data-lucide="plus" style="width: 18px; height: 18px;"></i> Add</button>
+        </form>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th style="width: 80px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categories %}
+                <tr>
+                    <td>{{ cat.name }}</td>
+                    <td>
+                        <form method="post" action="/settings/categories/{{ cat.id }}/delete" onsubmit="return confirmDelete(event, this, 'this category');">
+                            <button type="submit" class="btn btn-secondary" style="width:auto; padding: 4px 8px; font-size:0.8rem; border-color:var(--danger-color); color:var(--danger-color);">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="2" style="text-align:center; color:var(--text-muted);">No categories found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Types -->
+    <div class="panel">
+        <h3 style="margin-bottom:16px;">Item Types</h3>
+        
+        <form method="post" action="/settings/types/add" style="display:flex; gap:12px; margin-bottom: 20px;">
+            <input type="text" name="name" class="form-control" placeholder="New Type Name" required style="flex:1;">
+            <button type="submit" class="btn btn-primary" style="width:auto;"><i data-lucide="plus" style="width: 18px; height: 18px;"></i> Add</button>
+        </form>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Type Name</th>
+                    <th style="width: 80px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for typ in types %}
+                <tr>
+                    <td>{{ typ.name }}</td>
+                    <td>
+                        <form method="post" action="/settings/types/{{ typ.id }}/delete" onsubmit="return confirmDelete(event, this, 'this type');">
+                            <button type="submit" class="btn btn-secondary" style="width:auto; padding: 4px 8px; font-size:0.8rem; border-color:var(--danger-color); color:var(--danger-color);">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="2" style="text-align:center; color:var(--text-muted);">No types found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+function confirmDelete(event, form, itemType) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete ${itemType}. This cannot be undone!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--danger-color, #ef4444)',
+        cancelButtonColor: 'var(--text-muted, #64748b)',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+    return false;
+}
+</script>
+{% endblock %}

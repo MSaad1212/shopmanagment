@@ -1,5 +1,5 @@
 {% extends "dashboard.html" %}
-{% block title %}Stock — Business System{% endblock %}
+{% block title %}Stock — Newmetro{% endblock %}
 {% block page_title %}Stock / Inventory{% endblock %}
 {% block content %}
 <div class="toolbar">
@@ -49,7 +49,7 @@
                 <td><a href="/stock/{{ item.id }}/edit" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;">Edit</a></td>
             </tr>
             {% else %}
-            <tr><td colspan="9" style="text-align:center;color:var(--text-muted);">No items yet. Add your first tyre/item.</td></tr>
+            <tr><td colspan="9" style="text-align:center;color:var(--text-muted);">No items yet. Add your first part/item.</td></tr>
             {% endfor %}
         </tbody>
     </table>

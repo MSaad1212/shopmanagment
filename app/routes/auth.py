@@ -58,7 +58,7 @@ def login(
         token = create_session_token(user.id, remember=remember_me)
         log_audit(db, user.id, "Login", f"User {username} logged in successfully.")
 
-        response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+        response = RedirectResponse(url="/", status_code=303)
         response.set_cookie(
             key=SESSION_COOKIE_NAME,
             value=token,
@@ -95,7 +95,7 @@ def logout(request: Request, db: Session = Depends(get_db)):
         if uid:
             log_audit(db, uid, "Logout", "User logged out.")
 
-    response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(url="/login", status_code=303)
     response.delete_cookie(SESSION_COOKIE_NAME)
     return response
 
@@ -132,7 +132,7 @@ def create_user(
     db.commit()
 
     log_audit(db, current_user.id, "Create User", f"Created user {username} with role {role}.")
-    return RedirectResponse(url="/users", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/users", status_code=303)
 
 
 @router.post("/users/{user_id}/toggle-status")
@@ -158,7 +158,7 @@ def toggle_user_status(
     db.commit()
 
     log_audit(db, current_user.id, "Toggle User Status", f"Toggled status of user {user.username} to {new_status}.")
-    return RedirectResponse(url="/users", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/users", status_code=303)
 
 
 @router.post("/users/{user_id}/reset-password")

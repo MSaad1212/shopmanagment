@@ -6,8 +6,8 @@
 <div class="app-shell">
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <i data-lucide="disc" style="color: var(--accent-color); width: 24px; height: 24px;"></i>
-            <h2>BUSINESS SYSTEM</h2>
+            <img src="/static/img/gas.png" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
+            <h2>NEWMETRO</h2>
         </div>
         <nav class="sidebar-nav">
             <a href="/" class="nav-item {% if active_tab == 'dashboard' %}active{% endif %}">
@@ -22,9 +22,13 @@
                 <i data-lucide="truck" style="width: 18px; height: 18px;"></i>
                 Suppliers
             </a>
-            <a href="/customers" class="nav-item {% if active_tab == 'customers' %}active{% endif %}">
+            <a href="/customers" class="nav-item {% if active_tab == 'customers' and '/sales' not in request.url.path %}active{% endif %}">
                 <i data-lucide="users-2" style="width: 18px; height: 18px;"></i>
                 Customers
+            </a>
+            <a href="/customers/sales" class="nav-item {% if '/customers/sales' in request.url.path %}active{% endif %}">
+                <i data-lucide="file-text" style="width: 18px; height: 18px;"></i>
+                Invoices
             </a>
             <a href="/returns" class="nav-item {% if active_tab == 'returns' %}active{% endif %}">
                 <i data-lucide="refresh-cw" style="width: 18px; height: 18px;"></i>
@@ -49,6 +53,10 @@
             <a href="/profile" class="nav-item {% if active_tab == 'profile' %}active{% endif %}">
                 <i data-lucide="user" style="width: 18px; height: 18px;"></i>
                 My Profile
+            </a>
+            <a href="/settings" class="nav-item {% if active_tab == 'settings' %}active{% endif %}">
+                <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
+                Settings
             </a>
         </nav>
         <div class="sidebar-footer">
