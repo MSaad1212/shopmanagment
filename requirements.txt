@@ -10,3 +10,4 @@ python-dotenv==1.0.1
 weasyprint==62.3
 psycopg2-binary==2.9.9
 gunicorn==22.0.0
+a2wsgi==1.10.4
