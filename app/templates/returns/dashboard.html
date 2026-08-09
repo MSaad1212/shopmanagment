@@ -1,0 +1,74 @@
+{% extends "dashboard.html" %}
+{% block title %}Returns Dashboard{% endblock %}
+{% block page_title %}Daily Returns Dashboard{% endblock %}
+{% block content %}
+<div class="toolbar">
+    <form method="GET" class="filter-bar">
+        <input type="date" name="day" class="form-control" value="{{ selected }}" style="max-width:160px;">
+        <input type="text" name="q" class="form-control" placeholder="Item / brand" value="{{ q }}" style="max-width:140px;">
+        <input type="text" name="brand" class="form-control" placeholder="Brand" value="{{ brand }}" style="max-width:120px;">
+        <select name="reason" class="form-control" style="max-width:140px;">
+            <option value="">All reasons</option>
+            {% for r in reasons %}<option value="{{ r }}" {% if reason == r %}selected{% endif %}>{{ r }}</option>{% endfor %}
+        </select>
+        <button type="submit" class="btn btn-secondary" style="width:auto;">Filter</button>
+    </form>
+    <div style="display:flex;gap:10px;">
+        <a href="/returns/supplier/new" class="btn btn-secondary" style="width:auto;">Supplier Return</a>
+        <a href="/returns/customer/new" class="btn btn-primary" style="width:auto;">Customer Return</a>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px;">
+    <div class="glass-panel" style="padding:20px;">
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Supplier returns (out)</div>
+        <div style="font-size:1.4rem;font-weight:700;margin-top:6px;">Rs. {{ '%.2f'|format(supplier_total|float) }}</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);">{{ supplier_returns|length }} entries</div>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Customer returns (in)</div>
+        <div style="font-size:1.4rem;font-weight:700;margin-top:6px;">Rs. {{ '%.2f'|format(customer_total|float) }}</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);">{{ customer_returns|length }} entries</div>
+    </div>
+</div>
+
+<h3 style="margin-bottom:12px;font-size:1rem;">Supplier Returns — {{ selected }}</h3>
+<div class="table-container" style="margin-top:0;margin-bottom:28px;">
+    <table class="data-table">
+        <thead><tr><th>Return No</th><th>Supplier</th><th>Amount</th><th>Refund</th><th></th></tr></thead>
+        <tbody>
+            {% for r in supplier_returns %}
+            <tr>
+                <td>{{ r.return_no }}</td>
+                <td>{{ r.supplier.name }}</td>
+                <td>Rs. {{ '%.2f'|format(r.total_amount|float) }}</td>
+                <td>{{ r.refund_method or '—' }}</td>
+                <td><a href="/print/supplier-return/{{ r.id }}" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;" target="_blank">PDF</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No supplier returns this day.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h3 style="margin-bottom:12px;font-size:1rem;">Customer Returns — {{ selected }}</h3>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead><tr><th>Return No</th><th>Customer</th><th>Amount</th><th>Refund</th><th></th></tr></thead>
+        <tbody>
+            {% for r in customer_returns %}
+            <tr>
+                <td>{{ r.return_no }}</td>
+                <td>{{ r.customer.name }}</td>
+                <td>Rs. {{ '%.2f'|format(r.total_amount|float) }}</td>
+                <td>{{ r.refund_method or '—' }}</td>
+                <td><a href="/print/customer-return/{{ r.id }}" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;" target="_blank">PDF</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No customer returns this day.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

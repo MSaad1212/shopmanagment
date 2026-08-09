@@ -1,0 +1,24 @@
+{% extends "dashboard.html" %}
+{% block title %}Stock Valuation{% endblock %}
+{% block page_title %}Stock Valuation Report{% endblock %}
+{% block content %}
+<p style="margin-bottom:12px;">Total inventory value: <strong>Rs. {{ '%.2f'|format(grand|float) }}</strong></p>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead><tr><th>Code</th><th>Brand</th><th>Stock</th><th>Cost</th><th>Value</th></tr></thead>
+        <tbody>
+            {% for r in rows %}
+            <tr>
+                <td>{{ r.item.item_code }}</td>
+                <td>{{ r.item.brand }}</td>
+                <td>{{ r.item.current_stock }}</td>
+                <td>Rs. {{ '%.2f'|format(r.item.purchase_price|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(r.value|float) }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No items.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

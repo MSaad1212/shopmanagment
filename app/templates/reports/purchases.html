@@ -1,0 +1,31 @@
+{% extends "dashboard.html" %}
+{% block title %}Purchase Report{% endblock %}
+{% block page_title %}Purchase Report{% endblock %}
+{% block content %}
+<form method="GET" class="filter-bar" style="margin-bottom:16px;">
+    <input type="date" name="date_from" class="form-control" value="{{ date_from }}" style="max-width:150px;">
+    <input type="date" name="date_to" class="form-control" value="{{ date_to }}" style="max-width:150px;">
+    <button type="submit" class="btn btn-secondary" style="width:auto;">Apply</button>
+    <a href="/reports" class="btn btn-secondary" style="width:auto;">All Reports</a>
+</form>
+<p style="margin-bottom:12px;">Total: <strong>Rs. {{ '%.2f'|format(total|float) }}</strong></p>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead><tr><th>Invoice</th><th>Date</th><th>Supplier</th><th>Total</th><th>Paid</th><th>Balance</th></tr></thead>
+        <tbody>
+            {% for p in purchases %}
+            <tr>
+                <td><a href="/suppliers/purchases/{{ p.id }}" class="link">{{ p.invoice_no }}</a></td>
+                <td>{{ p.date }}</td>
+                <td>{{ p.supplier.name }}</td>
+                <td>Rs. {{ '%.2f'|format(p.total_amount|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(p.amount_paid|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(p.balance|float) }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No purchases in range.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

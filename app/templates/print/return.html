@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>{{ return_no }}</title>
+<style>
+@page { size: A4; margin: 18mm; }
+body { font-family: DejaVu Sans, Arial, sans-serif; font-size: 12px; color: #111; }
+h1 { font-size: 20px; margin: 0 0 4px; }
+.sub { color: #555; margin-bottom: 20px; }
+.meta td { padding: 2px 12px 2px 0; }
+table.items { width: 100%; border-collapse: collapse; margin-top: 12px; }
+table.items th, table.items td { border: 1px solid #ccc; padding: 8px; }
+table.items th { background: #f3f4f6; }
+.right { text-align: right; }
+</style>
+</head>
+<body>
+<h1>{{ shop_name }}</h1>
+<div class="sub">{{ shop_tagline }}</div>
+<h2>{{ kind }} Receipt</h2>
+<table class="meta">
+    <tr><td><strong>Return No</strong></td><td>{{ return_no }}</td></tr>
+    <tr><td><strong>Date</strong></td><td>{{ ret.date }}</td></tr>
+    <tr><td><strong>{{ party_label }}</strong></td><td>{{ party.name }}</td></tr>
+    <tr><td><strong>Refund</strong></td><td>{{ ret.refund_method or '—' }}</td></tr>
+</table>
+<table class="items">
+    <thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Subtotal</th><th>Reason</th></tr></thead>
+    <tbody>
+    {% for line in ret.items %}
+    <tr>
+        <td>{{ line.item.item_code if line.item else line.item_id }}</td>
+        <td>{{ line.quantity }}</td>
+        <td class="right">Rs. {{ '%.2f'|format(line.unit_price|float) }}</td>
+        <td class="right">Rs. {{ '%.2f'|format(line.subtotal|float) }}</td>
+        <td>{{ line.reason or '—' }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<p style="margin-top:16px;"><strong>Total: Rs. {{ '%.2f'|format(ret.total_amount|float) }}</strong></p>
+</body>
+</html>

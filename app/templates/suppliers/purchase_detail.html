@@ -1,0 +1,51 @@
+{% extends "dashboard.html" %}
+{% block title %}{{ purchase.invoice_no }}{% endblock %}
+{% block page_title %}Purchase {{ purchase.invoice_no }}{% endblock %}
+{% block content %}
+<div class="glass-panel" style="padding: 24px; margin-bottom: 32px;">
+    <div class="toolbar" style="margin-bottom: 0;">
+        <div>
+            <h3 style="margin-bottom: 6px; font-size: 1.25rem; color: var(--text-primary);">{{ purchase.supplier.name }}</h3>
+            <p style="color:var(--text-secondary); font-size: 0.95rem;">Date: {{ purchase.date }}</p>
+            
+            <div style="display: flex; gap: 32px; margin-top: 24px;">
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Total</p>
+                    <p style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary);">Rs. {{ '%.2f'|format(purchase.total_amount|float) }}</p>
+                </div>
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Paid</p>
+                    <p style="font-size: 1.35rem; font-weight: 600; color: var(--success);">Rs. {{ '%.2f'|format(purchase.amount_paid|float) }}</p>
+                </div>
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Balance</p>
+                    <p style="font-size: 1.35rem; font-weight: 600; color: {% if purchase.balance < 0 %}var(--error){% else %}var(--text-primary){% endif %};">Rs. {{ '%.2f'|format(purchase.balance|float) }}</p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <a href="/print/purchase/{{ purchase.id }}" class="btn btn-primary" style="width:auto; padding: 12px 24px;" target="_blank">
+                <i data-lucide="printer" style="width: 18px; height: 18px;"></i>
+                Print Invoice
+            </a>
+        </div>
+    </div>
+</div>
+
+<h3 style="margin-bottom: 16px; color: var(--text-primary); font-size: 1.15rem;">Order Items</h3>
+<div class="table-container" style="margin-top: 0;">
+    <table class="data-table">
+        <thead><tr><th>Item</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead>
+        <tbody>
+            {% for line in purchase.items %}
+            <tr>
+                <td style="font-weight: 500;">{{ line.item.item_code }} <span style="color: var(--text-muted); font-weight: 400; margin-left: 8px;">{{ line.item.brand }}</span></td>
+                <td>{{ line.quantity }}</td>
+                <td>Rs. {{ '%.2f'|format(line.unit_price|float) }}</td>
+                <td style="font-weight: 600;">Rs. {{ '%.2f'|format(line.subtotal|float) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

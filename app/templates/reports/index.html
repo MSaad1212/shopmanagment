@@ -1,0 +1,31 @@
+{% extends "dashboard.html" %}
+{% block title %}Reports{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+    <a href="/reports/sales?date_from={{ month_start }}&date_to={{ today }}" class="glass-panel report-card">
+        <h3>Sales Report</h3>
+        <p>Sales by date range, customer, and totals</p>
+    </a>
+    <a href="/reports/purchases?date_from={{ month_start }}&date_to={{ today }}" class="glass-panel report-card">
+        <h3>Purchase Report</h3>
+        <p>Purchases by date range and supplier</p>
+    </a>
+    <a href="/reports/returns?date_from={{ month_start }}&date_to={{ today }}" class="glass-panel report-card">
+        <h3>Returns Report</h3>
+        <p>Supplier and customer returns with reasons</p>
+    </a>
+    <a href="/reports/stock-valuation" class="glass-panel report-card">
+        <h3>Stock Valuation</h3>
+        <p>Current stock × purchase price</p>
+    </a>
+    <a href="/reports/profit?date_from={{ month_start }}&date_to={{ today }}" class="glass-panel report-card">
+        <h3>Profit Report</h3>
+        <p>Sale − purchase cost by item (Admin)</p>
+    </a>
+    <a href="/reports/outstanding" class="glass-panel report-card">
+        <h3>Outstanding Balances</h3>
+        <p>Who owes you / whom you owe</p>
+    </a>
+</div>
+{% endblock %}

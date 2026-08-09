@@ -1,0 +1,26 @@
+{% extends "dashboard.html" %}
+{% block title %}Low Stock — Business System{% endblock %}
+{% block page_title %}Low Stock Report{% endblock %}
+{% block content %}
+<p style="color:var(--text-secondary);margin-bottom:16px;">Items at or below their reorder level.</p>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead><tr><th>Code</th><th>Brand</th><th>Size</th><th>Stock</th><th>Reorder</th><th></th></tr></thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td><a href="/stock/{{ item.id }}" class="link">{{ item.item_code }}</a></td>
+                <td>{{ item.brand }}</td>
+                <td>{{ item.size or '—' }}</td>
+                <td><span class="badge badge-danger">{{ item.current_stock }}</span></td>
+                <td>{{ item.reorder_level }}</td>
+                <td><a href="/stock/{{ item.id }}" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;">View</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">All items are above reorder level.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<a href="/stock" class="btn btn-secondary" style="width:auto;margin-top:16px;">Back to Stock</a>
+{% endblock %}

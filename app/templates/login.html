@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Login — Business Management{% endblock %}
+
+{% block body %}
+<div class="auth-container">
+    <div class="auth-card glass-panel">
+        <div class="auth-header">
+            <h1>Business System</h1>
+            <p>Sign in to your dashboard</p>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-row-checkbox">
+                <label>
+                    <input type="checkbox" name="remember" value="1"> Remember me (14 days)
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i data-lucide="log-in" style="width: 18px; height: 18px;"></i> Sign In
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

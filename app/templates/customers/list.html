@@ -1,0 +1,37 @@
+{% extends "dashboard.html" %}
+{% block title %}Customers — Business System{% endblock %}
+{% block page_title %}Customers{% endblock %}
+{% block content %}
+<div class="toolbar">
+    <form method="GET" class="filter-bar">
+        <input type="text" name="q" class="form-control" placeholder="Search…" value="{{ q }}" style="max-width:220px;">
+        <button type="submit" class="btn btn-secondary" style="width:auto;">Search</button>
+    </form>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="/customers/sales" class="btn btn-secondary" style="width:auto;">Sales</a>
+        <a href="/customers/sales/new" class="btn btn-secondary" style="width:auto;">New Sale</a>
+        <a href="/customers/payments/new" class="btn btn-secondary" style="width:auto;">Record Payment</a>
+        <a href="/customers/new" class="btn btn-primary" style="width:auto;">Add Customer</a>
+    </div>
+</div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Code</th><th>Name</th><th>Phone</th><th>Vehicle</th><th>Balance Due</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            {% for c in customers %}
+            <tr>
+                <td><a href="/customers/{{ c.id }}" class="link">{{ c.customer_code }}</a></td>
+                <td style="font-weight:600;">{{ c.name }}{% if c.is_walk_in %} <span class="badge badge-success">Walk-in</span>{% endif %}</td>
+                <td>{{ c.phone or '—' }}</td>
+                <td>{{ c.vehicle_info or '—' }}</td>
+                <td>Rs. {{ '%.2f'|format(c.current_balance|float) }}</td>
+                <td>{% if c.status == 'Active' %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-danger">{{ c.status }}</span>{% endif %}</td>
+                <td><a href="/customers/{{ c.id }}/edit" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;">Edit</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No customers yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

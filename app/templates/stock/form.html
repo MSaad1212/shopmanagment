@@ -1,0 +1,70 @@
+{% extends "dashboard.html" %}
+{% block title %}{% if item %}Edit{% else %}Add{% endif %} Item — Business System{% endblock %}
+{% block page_title %}{% if item %}Edit Item {{ item.item_code }}{% else %}Add Item{% endif %}{% endblock %}
+{% block content %}
+<div class="glass-panel" style="padding:24px; max-width:720px;">
+    <form method="POST" action="{% if item %}/stock/{{ item.id }}/edit{% else %}/stock/new{% endif %}">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Brand *</label>
+                <input name="brand" class="form-control" value="{{ item.brand if item else '' }}" required>
+            </div>
+            <div class="form-group">
+                <label>Size</label>
+                <input name="size" class="form-control" placeholder="175/65 R14" value="{{ item.size if item and item.size else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Pattern / Model</label>
+                <input name="pattern" class="form-control" value="{{ item.pattern if item and item.pattern else '' }}">
+            </div>
+            <div class="form-group">
+                <label>Type</label>
+                <select name="type" class="form-control">
+                    <option value="">—</option>
+                    {% for t in types %}
+                    <option value="{{ t }}" {% if item and item.type == t %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Category *</label>
+                <select name="category" class="form-control" required>
+                    {% for c in categories %}
+                    <option value="{{ c }}" {% if item and item.category == c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Unit</label>
+                <input name="unit" class="form-control" value="{{ item.unit if item else 'Piece' }}">
+            </div>
+            <div class="form-group">
+                <label>Purchase Price</label>
+                <input name="purchase_price" type="number" step="0.01" class="form-control" value="{{ item.purchase_price if item else '0' }}">
+            </div>
+            <div class="form-group">
+                <label>Sale Price</label>
+                <input name="sale_price" type="number" step="0.01" class="form-control" value="{{ item.sale_price if item else '0' }}">
+            </div>
+            <div class="form-group">
+                <label>Reorder Level</label>
+                <input name="reorder_level" type="number" class="form-control" value="{{ item.reorder_level if item else 5 }}">
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="Active" {% if not item or item.status == 'Active' %}selected{% endif %}>Active</option>
+                    <option value="Discontinued" {% if item and item.status == 'Discontinued' %}selected{% endif %}>Discontinued</option>
+                </select>
+            </div>
+        </div>
+        {% if item %}
+        <p style="color:var(--text-muted);font-size:0.85rem;margin:12px 0;">Stock quantity is {{ item.current_stock }} and cannot be edited here — use purchases, sales, returns, or stock adjustment.</p>
+        {% endif %}
+        <div style="display:flex;gap:10px;margin-top:16px;">
+            <button type="submit" class="btn btn-primary" style="width:auto;">Save</button>
+            <a href="/stock" class="btn btn-secondary" style="width:auto;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

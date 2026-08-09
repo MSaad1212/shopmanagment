@@ -1,0 +1,41 @@
+{% extends "dashboard.html" %}
+{% block title %}{{ item.item_code }} — Business System{% endblock %}
+{% block page_title %}{{ item.item_code }} — {{ item.brand }}{% endblock %}
+{% block content %}
+<div class="toolbar">
+    <div>
+        <p style="color:var(--text-secondary);">{{ item.category }}{% if item.size %} · {{ item.size }}{% endif %}{% if item.pattern %} · {{ item.pattern }}{% endif %}</p>
+        <p style="margin-top:8px;">Stock: <strong>{{ item.current_stock }}</strong> {{ item.unit }}
+            {% if item.current_stock <= item.reorder_level %}<span class="badge badge-danger">Below reorder ({{ item.reorder_level }})</span>{% endif %}
+        </p>
+        <p style="margin-top:4px;color:var(--text-secondary);font-size:0.9rem;">Purchase Rs. {{ '%.2f'|format(item.purchase_price|float) }} · Sale Rs. {{ '%.2f'|format(item.sale_price|float) }}</p>
+    </div>
+    <div style="display:flex;gap:10px;">
+        <a href="/stock/{{ item.id }}/edit" class="btn btn-secondary" style="width:auto;">Edit</a>
+        <a href="/stock/{{ item.id }}/adjust" class="btn btn-secondary" style="width:auto;">Adjust Stock</a>
+        <a href="/stock" class="btn btn-secondary" style="width:auto;">Back</a>
+    </div>
+</div>
+
+<h3 style="margin:24px 0 12px;font-size:1rem;">Stock Ledger</h3>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead>
+            <tr><th>Date</th><th>Type</th><th>Change</th><th>After</th><th>Note</th></tr>
+        </thead>
+        <tbody>
+            {% for m in movements %}
+            <tr>
+                <td style="font-size:0.85rem;color:var(--text-secondary);">{{ m.created_at.strftime('%Y-%m-%d %H:%M') if m.created_at else '' }}</td>
+                <td>{{ m.movement_type }}</td>
+                <td style="color:{% if m.quantity_change > 0 %}var(--success){% else %}var(--error){% endif %};">{{ '%+d'|format(m.quantity_change) }}</td>
+                <td>{{ m.quantity_after }}</td>
+                <td style="color:var(--text-secondary);">{{ m.note or '' }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No stock movements yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

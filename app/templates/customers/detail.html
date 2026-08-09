@@ -1,0 +1,63 @@
+{% extends "dashboard.html" %}
+{% block title %}{{ customer.customer_code }}{% endblock %}
+{% block page_title %}Customer Ledger{% endblock %}
+{% block content %}
+<div class="glass-panel" style="padding: 24px; margin-bottom: 32px;">
+    <div class="toolbar" style="margin-bottom: 0;">
+        <div>
+            <h3 style="margin-bottom: 6px; font-size: 1.25rem; color: var(--text-primary);">
+                {{ customer.name }}
+                {% if customer.status == "Active" %}
+                    <span class="badge badge-success" style="margin-left: 8px; vertical-align: middle;">Active</span>
+                {% else %}
+                    <span class="badge badge-danger" style="margin-left: 8px; vertical-align: middle;">Inactive</span>
+                {% endif %}
+            </h3>
+            <p style="color:var(--text-secondary); font-size: 0.95rem;">{{ customer.customer_code }} · {{ customer.phone or 'No phone' }}{% if customer.vehicle_info %} · {{ customer.vehicle_info }}{% endif %}</p>
+            
+            <div style="display: flex; gap: 32px; margin-top: 24px;">
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Balance Due</p>
+                    <p style="font-size: 1.35rem; font-weight: 700; color: {% if customer.current_balance > 0 %}var(--error){% else %}var(--text-primary){% endif %};">Rs. {{ '%.2f'|format(customer.current_balance|float) }}</p>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+            <a href="/print/customer-ledger/{{ customer.id }}" class="btn btn-secondary" style="width:auto; padding: 10px 16px;" target="_blank">
+                <i data-lucide="printer" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                Statement
+            </a>
+            <a href="/customers/{{ customer.id }}/edit" class="btn btn-secondary" style="width:auto; padding: 10px 16px;">
+                <i data-lucide="edit" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                Edit
+            </a>
+            {% if not customer.is_walk_in %}
+            <a href="/customers/payments/new" class="btn btn-primary" style="width:auto; padding: 10px 16px;">
+                <i data-lucide="plus" style="width: 16px; height: 16px; margin-right: 6px;"></i>
+                Record Payment
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<h3 style="margin-bottom: 16px; color: var(--text-primary); font-size: 1.15rem;">Transaction History</h3>
+<div class="table-container" style="margin-top: 0;">
+    <table class="data-table">
+        <thead><tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Balance</th></tr></thead>
+        <tbody>
+            {% for e in ledger %}
+            <tr>
+                <td style="font-weight: 500;">{{ e.date }}</td>
+                <td>{{ e.description }}</td>
+                <td style="color: var(--error);">{% if e.debit %}Rs. {{ '%.2f'|format(e.debit|float) }}{% else %}—{% endif %}</td>
+                <td style="color: var(--success);">{% if e.credit %}Rs. {{ '%.2f'|format(e.credit|float) }}{% else %}—{% endif %}</td>
+                <td style="font-weight: 600;">Rs. {{ '%.2f'|format(e.balance|float) }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center; padding: 32px; color:var(--text-muted);">No ledger entries recorded yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

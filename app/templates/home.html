@@ -1,0 +1,71 @@
+{% extends "dashboard.html" %}
+{% block title %}Dashboard — Business System{% endblock %}
+{% block page_title %}Dashboard Overview{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px;">
+    <div class="glass-panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Today's Sales</span>
+            <i data-lucide="shopping-cart" style="color:var(--accent-color);width:18px;height:18px;"></i>
+        </div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:8px;">Rs. {{ '%.2f'|format(today_sales|float) }}</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);">{{ today_sales_count }} invoice(s)</div>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Today's Returns</span>
+            <i data-lucide="refresh-cw" style="color:var(--warning);width:18px;height:18px;"></i>
+        </div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:8px;">Rs. {{ '%.2f'|format(today_returns|float) }}</div>
+        <a href="/returns" style="font-size:0.8rem;color:var(--accent-color);">View returns →</a>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Low Stock Alerts</span>
+            <i data-lucide="alert-triangle" style="color:var(--error);width:18px;height:18px;"></i>
+        </div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:8px;">{{ low_stock_count }}</div>
+        <a href="/stock/low" style="font-size:0.8rem;color:var(--accent-color);">View low stock →</a>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:0.8rem;color:var(--text-secondary);">Outstanding</span>
+            <i data-lucide="wallet" style="color:var(--success);width:18px;height:18px;"></i>
+        </div>
+        <div style="font-size:0.95rem;font-weight:600;margin-top:8px;">Recv Rs. {{ '%.2f'|format(receivables|float) }}</div>
+        <div style="font-size:0.95rem;font-weight:600;">Pay Rs. {{ '%.2f'|format(payables|float) }}</div>
+        <a href="/reports/outstanding" style="font-size:0.8rem;color:var(--accent-color);">Details →</a>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div>
+        <h3 style="margin-bottom:12px;font-size:1rem;">Low Stock Items</h3>
+        <div class="table-container" style="margin-top:0;">
+            <table class="data-table">
+                <thead><tr><th>Code</th><th>Brand</th><th>Stock</th></tr></thead>
+                <tbody>
+                    {% for item in low_stock %}
+                    <tr>
+                        <td><a href="/stock/{{ item.id }}" class="link">{{ item.item_code }}</a></td>
+                        <td>{{ item.brand }}</td>
+                        <td><span class="badge badge-danger">{{ item.current_stock }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">All stock levels OK</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        <h3 style="margin-bottom:12px;font-size:1rem;">Quick Actions</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="/customers/sales/new" class="btn btn-primary" style="width:auto;justify-content:flex-start;">New Sale</a>
+            <a href="/suppliers/purchases/new" class="btn btn-secondary" style="width:auto;justify-content:flex-start;">New Purchase</a>
+            <a href="/returns/customer/new" class="btn btn-secondary" style="width:auto;justify-content:flex-start;">Customer Return</a>
+            <a href="/stock/new" class="btn btn-secondary" style="width:auto;justify-content:flex-start;">Add Stock Item</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

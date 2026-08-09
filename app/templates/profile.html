@@ -1,0 +1,27 @@
+{% extends "dashboard.html" %}
+
+{% block title %}My Profile — Business Management{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="glass-panel" style="padding: 24px; max-width: 480px;">
+    <h3 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">Change Password</h3>
+    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 20px;">Username: <strong>{{ current_user.username }}</strong> · Role: {{ current_user.role }}</p>
+
+    <form action="/profile" method="POST">
+        <div class="form-group">
+            <label for="current_password">Current Password</label>
+            <input type="password" id="current_password" name="current_password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="new_password">New Password</label>
+            <input type="password" id="new_password" name="new_password" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="confirm_password">Confirm New Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: auto;">Update Password</button>
+    </form>
+</div>
+{% endblock %}

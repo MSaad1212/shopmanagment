@@ -1,0 +1,37 @@
+{% extends "dashboard.html" %}
+{% block title %}Outstanding Balances{% endblock %}
+{% block page_title %}Outstanding Balances{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+    <div>
+        <h3 style="margin-bottom:12px;font-size:1rem;">Customers who owe you</h3>
+        <div class="table-container" style="margin-top:0;">
+            <table class="data-table">
+                <thead><tr><th>Customer</th><th>Balance</th></tr></thead>
+                <tbody>
+                    {% for c in customers %}
+                    <tr><td><a href="/customers/{{ c.id }}" class="link">{{ c.name }}</a></td><td>Rs. {{ '%.2f'|format(c.current_balance|float) }}</td></tr>
+                    {% else %}
+                    <tr><td colspan="2" style="text-align:center;color:var(--text-muted);">None</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div>
+        <h3 style="margin-bottom:12px;font-size:1rem;">Suppliers you owe</h3>
+        <div class="table-container" style="margin-top:0;">
+            <table class="data-table">
+                <thead><tr><th>Supplier</th><th>Balance</th></tr></thead>
+                <tbody>
+                    {% for s in suppliers %}
+                    <tr><td><a href="/suppliers/{{ s.id }}" class="link">{{ s.name }}</a></td><td>Rs. {{ '%.2f'|format(s.current_balance|float) }}</td></tr>
+                    {% else %}
+                    <tr><td colspan="2" style="text-align:center;color:var(--text-muted);">None</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

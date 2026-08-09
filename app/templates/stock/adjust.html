@@ -1,0 +1,22 @@
+{% extends "dashboard.html" %}
+{% block title %}Adjust Stock — Business System{% endblock %}
+{% block page_title %}Stock Adjustment — {{ item.item_code }}{% endblock %}
+{% block content %}
+<div class="glass-panel" style="padding:24px;max-width:480px;">
+    <p style="margin-bottom:16px;color:var(--text-secondary);">Current stock: <strong>{{ item.current_stock }}</strong>. Use positive to add, negative to remove. Reason is required.</p>
+    <form method="POST" action="/stock/{{ item.id }}/adjust">
+        <div class="form-group">
+            <label>Quantity Change *</label>
+            <input type="number" name="quantity_change" class="form-control" required placeholder="e.g. -2 or 5">
+        </div>
+        <div class="form-group">
+            <label>Reason *</label>
+            <textarea name="reason" class="form-control" rows="3" required placeholder="Damage, loss, count correction…"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn btn-primary" style="width:auto;">Apply Adjustment</button>
+            <a href="/stock/{{ item.id }}" class="btn btn-secondary" style="width:auto;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

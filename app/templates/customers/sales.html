@@ -1,0 +1,26 @@
+{% extends "dashboard.html" %}
+{% block title %}Sales{% endblock %}
+{% block page_title %}Sales Invoices{% endblock %}
+{% block content %}
+<div class="toolbar"><div></div><a href="/customers/sales/new" class="btn btn-primary" style="width:auto;">New Sale</a></div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Total</th><th>Received</th><th>Balance</th><th></th></tr></thead>
+        <tbody>
+            {% for s in sales %}
+            <tr>
+                <td><a href="/customers/sales/{{ s.id }}" class="link">{{ s.invoice_no }}</a></td>
+                <td>{{ s.date }}</td>
+                <td>{{ s.customer.name }}</td>
+                <td>Rs. {{ '%.2f'|format(s.total_amount|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(s.amount_received|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(s.balance|float) }}</td>
+                <td><a href="/print/sale/{{ s.id }}" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;" target="_blank">PDF</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No sales yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

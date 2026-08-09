@@ -1,0 +1,36 @@
+{% extends "dashboard.html" %}
+{% block title %}Suppliers — Business System{% endblock %}
+{% block page_title %}Suppliers{% endblock %}
+{% block content %}
+<div class="toolbar">
+    <form method="GET" class="filter-bar">
+        <input type="text" name="q" class="form-control" placeholder="Search…" value="{{ q }}" style="max-width:220px;">
+        <button type="submit" class="btn btn-secondary" style="width:auto;">Search</button>
+    </form>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="/suppliers/purchases" class="btn btn-secondary" style="width:auto;">Purchases</a>
+        <a href="/suppliers/purchases/new" class="btn btn-secondary" style="width:auto;">New Purchase</a>
+        <a href="/suppliers/payments/new" class="btn btn-secondary" style="width:auto;">Record Payment</a>
+        <a href="/suppliers/new" class="btn btn-primary" style="width:auto;">Add Supplier</a>
+    </div>
+</div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Code</th><th>Name</th><th>Phone</th><th>Balance Owed</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+            {% for s in suppliers %}
+            <tr>
+                <td><a href="/suppliers/{{ s.id }}" class="link">{{ s.supplier_code }}</a></td>
+                <td style="font-weight:600;">{{ s.name }}</td>
+                <td>{{ s.phone or '—' }}</td>
+                <td>Rs. {{ '%.2f'|format(s.current_balance|float) }}</td>
+                <td>{% if s.status == 'Active' %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-danger">{{ s.status }}</span>{% endif %}</td>
+                <td><a href="/suppliers/{{ s.id }}/edit" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;">Edit</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No suppliers yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

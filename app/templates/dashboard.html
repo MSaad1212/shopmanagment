@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Business Management{% endblock %}
+
+{% block body %}
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i data-lucide="disc" style="color: var(--accent-color); width: 24px; height: 24px;"></i>
+            <h2>BUSINESS SYSTEM</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/" class="nav-item {% if active_tab == 'dashboard' %}active{% endif %}">
+                <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+                Dashboard
+            </a>
+            <a href="/stock" class="nav-item {% if active_tab == 'stock' %}active{% endif %}">
+                <i data-lucide="package" style="width: 18px; height: 18px;"></i>
+                Stock / Inventory
+            </a>
+            <a href="/suppliers" class="nav-item {% if active_tab == 'suppliers' %}active{% endif %}">
+                <i data-lucide="truck" style="width: 18px; height: 18px;"></i>
+                Suppliers
+            </a>
+            <a href="/customers" class="nav-item {% if active_tab == 'customers' %}active{% endif %}">
+                <i data-lucide="users-2" style="width: 18px; height: 18px;"></i>
+                Customers
+            </a>
+            <a href="/returns" class="nav-item {% if active_tab == 'returns' %}active{% endif %}">
+                <i data-lucide="refresh-cw" style="width: 18px; height: 18px;"></i>
+                Returns Dashboard
+            </a>
+            <a href="/ledger" class="nav-item {% if active_tab == 'ledger' %}active{% endif %}">
+                <i data-lucide="landmark" style="width: 18px; height: 18px;"></i>
+                General Ledger
+            </a>
+            <a href="/reports" class="nav-item {% if active_tab == 'reports' %}active{% endif %}">
+                <i data-lucide="bar-chart-3" style="width: 18px; height: 18px;"></i>
+                Reports
+            </a>
+            <a href="/users" class="nav-item {% if active_tab == 'users' %}active{% endif %}">
+                <i data-lucide="user-cog" style="width: 18px; height: 18px;"></i>
+                User Accounts
+            </a>
+            <a href="/audit-log" class="nav-item {% if active_tab == 'audit' %}active{% endif %}">
+                <i data-lucide="scroll-text" style="width: 18px; height: 18px;"></i>
+                Audit Log
+            </a>
+            <a href="/profile" class="nav-item {% if active_tab == 'profile' %}active{% endif %}">
+                <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                My Profile
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile-info">
+                <span class="user-profile-name">{{ current_user.username }}</span>
+                <span class="user-profile-role">{{ current_user.role }}</span>
+            </div>
+            <a href="/logout" class="logout-icon-btn" title="Sign Out">
+                <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+            </a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-nav">
+            <div class="page-title">
+                {% block page_title %}Dashboard Overview{% endblock %}
+            </div>
+            <div class="top-nav-right">
+                <span style="font-size: 0.85rem; color: var(--text-secondary);">Logged in as: <strong>{{ current_user.username }}</strong></span>
+            </div>
+        </header>
+        <div class="content-body">
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            {% if success %}
+            <div class="alert alert-success">{{ success }}</div>
+            {% endif %}
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+{% endblock %}

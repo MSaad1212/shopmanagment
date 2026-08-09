@@ -1,0 +1,58 @@
+{% extends "dashboard.html" %}
+{% block title %}General Ledger{% endblock %}
+{% block page_title %}Accounts Overview{% endblock %}
+{% block content %}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px;">
+    <div class="glass-panel" style="padding:20px;">
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Total Receivables</div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:6px;">Rs. {{ '%.2f'|format(receivables|float) }}</div>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Total Payables</div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:6px;">Rs. {{ '%.2f'|format(payables|float) }}</div>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Cash In (period)</div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:6px;color:var(--success);">Rs. {{ '%.2f'|format(cash_in|float) }}</div>
+    </div>
+    <div class="glass-panel" style="padding:20px;">
+        <div style="font-size:0.8rem;color:var(--text-secondary);">Cash Out (period)</div>
+        <div style="font-size:1.5rem;font-weight:700;margin-top:6px;color:var(--error);">Rs. {{ '%.2f'|format(cash_out|float) }}</div>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar" style="margin-bottom:20px;">
+    <label style="font-size:0.85rem;color:var(--text-secondary);">Cash/Bank period:</label>
+    <input type="date" name="period_from" class="form-control" value="{{ start }}" style="max-width:150px;">
+    <input type="date" name="period_to" class="form-control" value="{{ end }}" style="max-width:150px;">
+    <label style="font-size:0.85rem;color:var(--text-secondary);">Cash book day:</label>
+    <input type="date" name="day" class="form-control" value="{{ cash_day }}" style="max-width:150px;">
+    <button type="submit" class="btn btn-secondary" style="width:auto;">Update</button>
+    <a href="/print/cash-summary?day={{ cash_day }}" class="btn btn-primary" style="width:auto;" target="_blank">Print Daily Cash</a>
+</form>
+
+<p style="margin-bottom:12px;color:var(--text-secondary);">Period net cash: <strong>Rs. {{ '%.2f'|format(cash_net|float) }}</strong></p>
+
+<h3 style="margin:16px 0 12px;font-size:1rem;">Daily Cash Book — {{ cash_day }}</h3>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead><tr><th>Description</th><th>Cash In</th><th>Cash Out</th></tr></thead>
+        <tbody>
+            {% for r in cash_book %}
+            <tr>
+                <td>{{ r.desc }}</td>
+                <td>{% if r.in %}Rs. {{ '%.2f'|format(r.in|float) }}{% else %}—{% endif %}</td>
+                <td>{% if r.out %}Rs. {{ '%.2f'|format(r.out|float) }}{% else %}—{% endif %}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="3" style="text-align:center;color:var(--text-muted);">No cash transactions this day.</td></tr>
+            {% endfor %}
+            <tr style="font-weight:700;">
+                <td>Day totals</td>
+                <td>Rs. {{ '%.2f'|format(day_in|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(day_out|float) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

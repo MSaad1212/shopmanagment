@@ -1,0 +1,31 @@
+{% extends "dashboard.html" %}
+{% block title %}Sales Report{% endblock %}
+{% block page_title %}Sales Report{% endblock %}
+{% block content %}
+<form method="GET" class="filter-bar" style="margin-bottom:16px;">
+    <input type="date" name="date_from" class="form-control" value="{{ date_from }}" style="max-width:150px;">
+    <input type="date" name="date_to" class="form-control" value="{{ date_to }}" style="max-width:150px;">
+    <button type="submit" class="btn btn-secondary" style="width:auto;">Apply</button>
+    <a href="/reports" class="btn btn-secondary" style="width:auto;">All Reports</a>
+</form>
+<p style="margin-bottom:12px;">Total: <strong>Rs. {{ '%.2f'|format(total|float) }}</strong> · {{ sales|length }} invoices</p>
+<div class="table-container" style="margin-top:0;">
+    <table class="data-table">
+        <thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Total</th><th>Received</th><th>Balance</th></tr></thead>
+        <tbody>
+            {% for s in sales %}
+            <tr>
+                <td><a href="/customers/sales/{{ s.id }}" class="link">{{ s.invoice_no }}</a></td>
+                <td>{{ s.date }}</td>
+                <td>{{ s.customer.name }}</td>
+                <td>Rs. {{ '%.2f'|format(s.total_amount|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(s.amount_received|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(s.balance|float) }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No sales in range.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "dashboard.html" %}
+{% block title %}{% if supplier %}Edit{% else %}Add{% endif %} Supplier{% endblock %}
+{% block page_title %}{% if supplier %}Edit {{ supplier.supplier_code }}{% else %}Add Supplier{% endif %}{% endblock %}
+{% block content %}
+<div class="glass-panel" style="padding:24px;max-width:640px;">
+    <form method="POST" action="{% if supplier %}/suppliers/{{ supplier.id }}/edit{% else %}/suppliers/new{% endif %}">
+        <div class="form-grid">
+            <div class="form-group"><label>Business Name *</label><input name="name" class="form-control" value="{{ supplier.name if supplier else '' }}" required></div>
+            <div class="form-group"><label>Contact Person</label><input name="contact_person" class="form-control" value="{{ supplier.contact_person if supplier and supplier.contact_person else '' }}"></div>
+            <div class="form-group"><label>Phone</label><input name="phone" class="form-control" value="{{ supplier.phone if supplier and supplier.phone else '' }}"></div>
+            <div class="form-group"><label>Status</label>
+                <select name="status" class="form-control">
+                    <option value="Active" {% if not supplier or supplier.status == 'Active' %}selected{% endif %}>Active</option>
+                    <option value="Inactive" {% if supplier and supplier.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+                </select>
+            </div>
+            <div class="form-group" style="grid-column:1/-1;"><label>Address</label><textarea name="address" class="form-control" rows="2">{{ supplier.address if supplier and supplier.address else '' }}</textarea></div>
+            {% if not supplier %}
+            <div class="form-group"><label>Opening Balance (you owe)</label><input name="opening_balance" type="number" step="0.01" class="form-control" value="0"></div>
+            {% endif %}
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px;">
+            <button type="submit" class="btn btn-primary" style="width:auto;">Save</button>
+            <a href="/suppliers" class="btn btn-secondary" style="width:auto;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

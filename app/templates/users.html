@@ -1,0 +1,92 @@
+{% extends "dashboard.html" %}
+
+{% block title %}User Accounts — Business Management{% endblock %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<div class="users-layout">
+    <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-size: 1.1rem; font-weight: 600;">Registered System Accounts</h3>
+        </div>
+
+        <div class="table-container" style="margin-top: 0;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td style="font-weight: 600;">{{ user.username }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>
+                            {% if user.status == 'Active' %}
+                            <span class="badge badge-success">Active</span>
+                            {% else %}
+                            <span class="badge badge-danger">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ user.created_at.strftime('%Y-%m-%d %H:%M') if user.created_at else '' }}</td>
+                        <td>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                                {% if user.id != current_user.id %}
+                                <form action="/users/{{ user.id }}/toggle-status" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; width: auto;">
+                                        {% if user.status == 'Active' %}Deactivate{% else %}Activate{% endif %}
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span style="font-size: 0.85rem; color: var(--text-muted); font-style: italic;">Current User</span>
+                                {% endif %}
+                                <form action="/users/{{ user.id }}/reset-password" method="POST" style="display: flex; gap: 6px; align-items: center;">
+                                    <input type="password" name="new_password" class="form-control" placeholder="New pwd" style="padding: 6px 10px; width: 110px; font-size: 0.8rem;" required>
+                                    <button type="submit" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; width: auto;">Reset</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted);">Forgot password? Admin can reset any account password above (no email required).</p>
+    </div>
+
+    <div class="glass-panel" style="padding: 24px; height: fit-content;">
+        <h3 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+            <i data-lucide="user-plus" style="color: var(--accent-color); width: 18px; height: 18px;"></i>
+            Add User Account
+        </h3>
+
+        <form action="/users" method="POST">
+            <div class="form-group">
+                <label for="new-username">Username</label>
+                <input type="text" id="new-username" name="username" class="form-control" placeholder="e.g. john_doe" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-password">Password</label>
+                <input type="password" id="new-password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-role">Role</label>
+                <select id="new-role" name="role" class="form-control">
+                    <option value="Admin">Admin (Owner)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                Create Account
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

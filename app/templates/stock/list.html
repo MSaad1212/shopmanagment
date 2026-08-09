@@ -1,0 +1,57 @@
+{% extends "dashboard.html" %}
+{% block title %}Stock — Business System{% endblock %}
+{% block page_title %}Stock / Inventory{% endblock %}
+{% block content %}
+<div class="toolbar">
+    <form method="GET" action="/stock" class="filter-bar">
+        <input type="text" name="q" class="form-control" placeholder="Search code, brand, size…" value="{{ filters.q }}" style="max-width:220px;">
+        <select name="category" class="form-control" style="max-width:160px;">
+            <option value="">All categories</option>
+            {% for c in categories %}
+            <option value="{{ c }}" {% if filters.category == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="brand" class="form-control" placeholder="Brand" value="{{ filters.brand }}" style="max-width:140px;">
+        <label class="check-inline"><input type="checkbox" name="low_stock" value="1" {% if filters.low_stock %}checked{% endif %}> Low stock only</label>
+        <button type="submit" class="btn btn-secondary" style="width:auto;">Filter</button>
+    </form>
+    <div style="display:flex; gap:10px;">
+        <a href="/stock/low" class="btn btn-secondary" style="width:auto;">Low Stock Report</a>
+        <a href="/stock/new" class="btn btn-primary" style="width:auto;"><i data-lucide="plus" style="width:16px;height:16px;"></i> Add Item</a>
+    </div>
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Code</th><th>Brand</th><th>Size</th><th>Category</th>
+                <th>Purchase</th><th>Sale</th><th>Stock</th><th>Status</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td style="font-weight:600;"><a href="/stock/{{ item.id }}" class="link">{{ item.item_code }}</a></td>
+                <td>{{ item.brand }}</td>
+                <td>{{ item.size or '—' }}</td>
+                <td>{{ item.category }}</td>
+                <td>Rs. {{ '%.2f'|format(item.purchase_price|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(item.sale_price|float) }}</td>
+                <td>
+                    {% if item.current_stock <= item.reorder_level %}
+                    <span class="badge badge-danger">{{ item.current_stock }}</span>
+                    {% else %}
+                    {{ item.current_stock }}
+                    {% endif %}
+                </td>
+                <td>{% if item.status == 'Active' %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-danger">{{ item.status }}</span>{% endif %}</td>
+                <td><a href="/stock/{{ item.id }}/edit" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;">Edit</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="9" style="text-align:center;color:var(--text-muted);">No items yet. Add your first tyre/item.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

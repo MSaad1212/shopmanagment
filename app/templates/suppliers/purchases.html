@@ -1,0 +1,29 @@
+{% extends "dashboard.html" %}
+{% block title %}Purchases{% endblock %}
+{% block page_title %}Purchase Invoices{% endblock %}
+{% block content %}
+<div class="toolbar">
+    <div></div>
+    <a href="/suppliers/purchases/new" class="btn btn-primary" style="width:auto;">New Purchase</a>
+</div>
+<div class="table-container">
+    <table class="data-table">
+        <thead><tr><th>Invoice</th><th>Date</th><th>Supplier</th><th>Total</th><th>Paid</th><th>Balance</th><th></th></tr></thead>
+        <tbody>
+            {% for p in purchases %}
+            <tr>
+                <td><a href="/suppliers/purchases/{{ p.id }}" class="link">{{ p.invoice_no }}</a></td>
+                <td>{{ p.date }}</td>
+                <td>{{ p.supplier.name }}</td>
+                <td>Rs. {{ '%.2f'|format(p.total_amount|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(p.amount_paid|float) }}</td>
+                <td>Rs. {{ '%.2f'|format(p.balance|float) }}</td>
+                <td><a href="/print/purchase/{{ p.id }}" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;" target="_blank">PDF</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No purchases yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
