@@ -13,17 +13,18 @@ if DATABASE_URL.startswith("postgres://"):
 
 try:
     url = urlparse(DATABASE_URL)
-    user = url.username or "root"
-    password = url.password or ""
-    host = url.hostname or "localhost"
-    port = url.port or 3306
-    db_name = url.path.lstrip("/")
-    
-    if db_name:
-        conn = pymysql.connect(host=host, user=user, password=password, port=port)
-        cursor = conn.cursor()
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
-        conn.close()
+    if url.scheme in ["mysql", "mysql+pymysql"]:
+        user = url.username or "root"
+        password = url.password or ""
+        host = url.hostname or "localhost"
+        port = url.port or 3306
+        db_name = url.path.lstrip("/")
+        
+        if db_name:
+            conn = pymysql.connect(host=host, user=user, password=password, port=port)
+            cursor = conn.cursor()
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+            conn.close()
 except Exception as e:
     print(f"Warning: Could not auto-create database: {e}")
 

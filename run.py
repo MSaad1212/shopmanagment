@@ -59,7 +59,11 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
     raise exc
 
-app.mount("/static", StaticFiles(directory="public/static"), name="static")
+import os
+if os.path.exists("public/static"):
+    app.mount("/static", StaticFiles(directory="public/static"), name="static")
+elif os.path.exists("app/static"):
+    app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(auth.router)
 app.include_router(dashboard.router)
