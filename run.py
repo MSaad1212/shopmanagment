@@ -60,10 +60,13 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     raise exc
 
 import os
-if os.path.exists("public/static"):
-    app.mount("/static", StaticFiles(directory="public/static"), name="static")
-elif os.path.exists("app/static"):
-    app.mount("/static", StaticFiles(directory="app/static"), name="static")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "app", "static")
+
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+else:
+    print(f"Warning: Static directory not found at {STATIC_DIR}")
 
 app.include_router(auth.router)
 app.include_router(dashboard.router)
