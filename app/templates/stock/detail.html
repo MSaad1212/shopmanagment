@@ -19,8 +19,7 @@
         <a href="/stock" class="btn btn-secondary" style="width:auto;">Back</a>
         <form action="/stock/{{ item.id }}/delete" method="POST" style="display:inline;"
             onsubmit="return confirm('Are you sure you want to delete this item?');">
-            <button type="submit" class="btn"
-                style="background-color: var(--error); color: white; border: none; width:auto; padding: 10px 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; border-radius: 8px;">
+            <button type="submit" class="btn" style="width:auto; background-color: var(--error); color: white;">
                 Delete
             </button>
         </form>
