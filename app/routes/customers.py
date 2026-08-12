@@ -285,3 +285,23 @@ def update_customer(
     db.commit()
     log_audit(db, current_user.id, "Update Customer", f"Updated {customer.customer_code}")
     return RedirectResponse(url=f"/customers/{customer_id}", status_code=303)
+
+
+@router.post("/{customer_id}/delete")
+def delete_customer(
+    customer_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(404, "Customer not found")
+    if customer.is_walk_in:
+        raise HTTPException(400, "Cannot delete Walk-in Customer")
+    
+    customer_code = customer.customer_code
+    db.delete(customer)
+    db.commit()
+    log_audit(db, current_user.id, "Delete Customer", f"Deleted customer {customer_code}")
+    return RedirectResponse(url="/customers", status_code=303)

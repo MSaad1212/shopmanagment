@@ -9,7 +9,7 @@
 
 This is a web-based system to run your business's daily business:
 
-- Track every tyre/item in stock (how many you have, cost, selling price)
+- Track every gas kit/item in stock (how many you have, cost, selling price)
 - Record purchases from suppliers and sales to customers
 - Record **returns** — both when you return goods to a supplier, and when a customer returns goods to you
 - Keep a running **ledger** (a running account) for every supplier and every customer, showing what you owe them or what they owe you (credit/debit)
@@ -69,12 +69,12 @@ This is the heart of the system — everything you have for sale.
 ### 4.1 Item Record — Fields
 | Field | Example | Notes |
 |---|---|---|
-| Item Code | TYR-0001 | Auto-generated, unique |
+| Item Code | MT-0001 | Auto-generated, unique |
 | Brand | Dunlop, Bridgestone, GT Radial | |
-| Size | 175/65 R14 | Standard tyre size format |
+| Size | 175/65 R14 | Standard gas kit size format |
 | Pattern/Model | Sport, Eco | |
 | Type | Tubeless / Tube-type | |
-| Category | Car tyre, Bike tyre, Truck tyre, Tube, Rim, Accessory | You may sell more than just tyres |
+| Category | Car gas kit, Bike gas kit, Truck gas kit, Tube, Rim, Accessory | You may sell more than just gas kits |
 | Purchase Price | Cost price per unit | Used to calculate profit |
 | Sale Price | Selling price per unit | |
 | Current Stock Quantity | Auto-calculated | Never edited manually — only changes through purchase/sale/return entries |
@@ -124,7 +124,7 @@ This is the heart of the system — everything you have for sale.
 - Stock quantity for each item increases
 - Supplier ledger gets a new entry (you now owe them, or owe them less if paid)
 
-### 5.3 Supplier Return (You Send Goods Back to Supplier — e.g., defective tyre)
+### 5.3 Supplier Return (You Send Goods Back to Supplier — e.g., defective gas kit)
 | Field | Notes |
 |---|---|
 | Return No. | Auto |

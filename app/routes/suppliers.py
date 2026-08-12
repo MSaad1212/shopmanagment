@@ -260,3 +260,21 @@ def update_supplier(
     db.commit()
     log_audit(db, current_user.id, "Update Supplier", f"Updated {supplier.supplier_code}")
     return RedirectResponse(url=f"/suppliers/{supplier_id}", status_code=303)
+
+
+@router.post("/{supplier_id}/delete")
+def delete_supplier(
+    supplier_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    supplier = db.query(Supplier).filter(Supplier.id == supplier_id).first()
+    if not supplier:
+        raise HTTPException(404, "Supplier not found")
+    
+    supplier_code = supplier.supplier_code
+    db.delete(supplier)
+    db.commit()
+    log_audit(db, current_user.id, "Delete Supplier", f"Deleted supplier {supplier_code}")
+    return RedirectResponse(url="/suppliers", status_code=303)

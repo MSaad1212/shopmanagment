@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_tyre_shop_management_system")
+SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key_gas kit_shop_management_system")
 fernet_key = base64.urlsafe_b64encode(hashlib.sha256(SECRET_KEY.encode()).digest())
 fernet = Fernet(fernet_key)
 

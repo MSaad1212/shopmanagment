@@ -16,7 +16,7 @@ from app.services import money
 router = APIRouter(prefix="/print", tags=["print"])
 templates = Jinja2Templates(directory="app/templates")
 
-SHOP_NAME = "Newmetro"
+SHOP_NAME = "Metro Traders"
 SHOP_TAGLINE = "Car Gas Kit Parts | WhatsApp: 0331-9542475"
 
 _weasy_html = None

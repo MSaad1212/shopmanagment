@@ -34,15 +34,15 @@ try:
         db.flush()
 
         # Add Items
-        i1 = Item(item_code=next_code(db, Item, "item_code", "TYR"), brand="Michelin", size="205/55 R16", pattern="Primacy 4", type="Tubeless", category="Car Tyre", purchase_price=80.00, sale_price=120.00, current_stock=50, reorder_level=10, unit="Piece")
+        i1 = Item(item_code=next_code(db, Item, "item_code", "MT"), brand="Landi Renzo", size="60L Cylinder", pattern="Sequential Kit", type="CNG", category="Car Gas Kit", purchase_price=45000.00, sale_price=55000.00, current_stock=50, reorder_level=10, unit="Kit")
         db.add(i1)
-        db.flush()
+        db.commit()
         
-        i2 = Item(item_code=next_code(db, Item, "item_code", "TYR"), brand="Bridgestone", size="195/65 R15", pattern="Ecopia", type="Tubeless", category="Car Tyre", purchase_price=65.00, sale_price=95.00, current_stock=30, reorder_level=8, unit="Piece")
+        i2 = Item(item_code=next_code(db, Item, "item_code", "MT"), brand="Lovato", size="55L Cylinder", pattern="EFI Kit", type="LPG", category="Car Gas Kit", purchase_price=35000.00, sale_price=42000.00, current_stock=30, reorder_level=8, unit="Kit")
         db.add(i2)
-        db.flush()
+        db.commit()
         
-        i3 = Item(item_code=next_code(db, Item, "item_code", "TYR"), brand="Dunlop", size="175/70 R13", pattern="SP Touring", type="Tube-type", category="Car Tyre", purchase_price=45.00, sale_price=70.00, current_stock=100, reorder_level=20, unit="Piece")
+        i3 = Item(item_code=next_code(db, Item, "item_code", "MT"), brand="Tomasetto", size="40L Cylinder", pattern="Carburetor Kit", type="CNG", category="Car Gas Kit", purchase_price=25000.00, sale_price=32000.00, current_stock=100, reorder_level=20, unit="Kit")
         db.add(i3)
         db.flush()
 

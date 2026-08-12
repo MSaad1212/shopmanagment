@@ -91,7 +91,7 @@ def create_item(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    code = next_code(db, Item, "item_code", "TYR")
+    code = next_code(db, Item, "item_code", "MT")
     item = Item(
         item_code=code,
         brand=brand.strip(),
@@ -214,3 +214,21 @@ def adjust_stock(
             "active_tab": "stock", "error": str(e), "success": None,
         })
     return RedirectResponse(url=f"/stock/{item_id}", status_code=303)
+
+
+@router.post("/{item_id}/delete")
+def delete_item(
+    item_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    item = db.query(Item).filter(Item.id == item_id).first()
+    if not item:
+        raise HTTPException(404, "Item not found")
+    
+    item_code = item.item_code
+    db.delete(item)
+    db.commit()
+    log_audit(db, current_user.id, "Delete Item", f"Deleted item {item_code}")
+    return RedirectResponse(url="/stock", status_code=303)
