@@ -24,6 +24,8 @@ def parse_date(value: str) -> date:
 def list_suppliers(
     request: Request,
     q: str = Query(""),
+    status: str = Query(""),
+    balance_status: str = Query(""),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -31,10 +33,24 @@ def list_suppliers(
     if q:
         like = f"%{q}%"
         query = query.filter((Supplier.name.ilike(like)) | (Supplier.supplier_code.ilike(like)) | (Supplier.phone.ilike(like)))
+    if status:
+        query = query.filter(Supplier.status == status)
+    if balance_status == "with_balance":
+        query = query.filter(Supplier.current_balance > 0)
+    elif balance_status == "credit":
+        query = query.filter(Supplier.current_balance < 0)
+    elif balance_status == "zero":
+        query = query.filter(Supplier.current_balance == 0)
+
     suppliers = query.order_by(Supplier.name).all()
     return templates.TemplateResponse("suppliers/list.html", {
         "request": request, "current_user": current_user, "suppliers": suppliers,
-        "q": q, "active_tab": "suppliers", "error": None, "success": None,
+        "filters": {
+            "q": q,
+            "status": status,
+            "balance_status": balance_status,
+        },
+        "active_tab": "suppliers", "error": None, "success": None,
     })
 
 

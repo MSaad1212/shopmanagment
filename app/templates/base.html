@@ -23,6 +23,32 @@
         document.body.addEventListener('htmx:afterOnLoad', function() {
             lucide.createIcons();
         });
+
+        function confirmDelete(event, itemName = 'item') {
+            event.preventDefault();
+            const form = event.currentTarget;
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You want to delete this ${itemName}? This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#475569',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                background: '#ffffff',
+                color: '#0f172a',
+                iconColor: '#f59e0b',
+                customClass: {
+                    popup: 'swal-premium-popup'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false;
+        }
     </script>
 </body>
 </html>

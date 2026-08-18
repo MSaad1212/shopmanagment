@@ -25,6 +25,9 @@ def parse_date(value: str) -> date:
 def list_customers(
     request: Request,
     q: str = Query(""),
+    status: str = Query(""),
+    balance_status: str = Query(""),
+    customer_type: str = Query(""),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -34,10 +37,29 @@ def list_customers(
     if q:
         like = f"%{q}%"
         query = query.filter((Customer.name.ilike(like)) | (Customer.customer_code.ilike(like)) | (Customer.phone.ilike(like)))
+    if status:
+        query = query.filter(Customer.status == status)
+    if balance_status == "with_balance":
+        query = query.filter(Customer.current_balance > 0)
+    elif balance_status == "credit":
+        query = query.filter(Customer.current_balance < 0)
+    elif balance_status == "zero":
+        query = query.filter(Customer.current_balance == 0)
+    if customer_type == "walk_in":
+        query = query.filter(Customer.is_walk_in == True)
+    elif customer_type == "regular":
+        query = query.filter(Customer.is_walk_in == False)
+
     customers = query.order_by(Customer.name).all()
     return templates.TemplateResponse("customers/list.html", {
         "request": request, "current_user": current_user, "customers": customers,
-        "q": q, "active_tab": "customers", "error": None, "success": None,
+        "filters": {
+            "q": q,
+            "status": status,
+            "balance_status": balance_status,
+            "customer_type": customer_type,
+        },
+        "active_tab": "customers", "error": None, "success": None,
     })
 
 

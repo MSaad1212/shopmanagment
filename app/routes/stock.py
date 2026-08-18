@@ -19,6 +19,8 @@ def list_items(
     q: str = Query(""),
     brand: str = Query(""),
     category: str = Query(""),
+    type: str = Query(""),
+    status: str = Query(""),
     low_stock: str = Query(""),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
@@ -36,19 +38,25 @@ def list_items(
         query = query.filter(Item.brand.ilike(f"%{brand}%"))
     if category:
         query = query.filter(Item.category == category)
+    if type:
+        query = query.filter(Item.type == type)
+    if status:
+        query = query.filter(Item.status == status)
     if low_stock:
         query = query.filter(Item.current_stock <= Item.reorder_level)
 
     items = query.order_by(Item.item_code).all()
     brands = [r[0] for r in db.query(Item.brand).distinct().order_by(Item.brand).all() if r[0]]
     categories = [c.name for c in db.query(ItemCategory).order_by(ItemCategory.name).all()]
+    types = [t.name for t in db.query(ItemType).order_by(ItemType.name).all()]
     return templates.TemplateResponse("stock/list.html", {
         "request": request,
         "current_user": current_user,
         "items": items,
         "categories": categories,
         "brands": brands,
-        "filters": {"q": q, "brand": brand, "category": category, "low_stock": low_stock},
+        "types": types,
+        "filters": {"q": q, "brand": brand, "category": category, "type": type, "status": status, "low_stock": low_stock},
         "active_tab": "stock",
         "error": None,
         "success": None,

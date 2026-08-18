@@ -44,7 +44,7 @@
                 <i data-lucide="plus" style="width: 16px; height: 16px; margin-right: 6px;"></i>
                 Record Payment
             </a>
-            <form action="/suppliers/{{ supplier.id }}/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this supplier?');">
+            <form action="/suppliers/{{ supplier.id }}/delete" method="POST" style="display:inline;" onsubmit="return confirmDelete(event, 'supplier');">
                 <button type="submit" class="btn" style="width:auto; padding: 10px 16px; background-color: var(--error); color: white;">
                     <i data-lucide="trash-2" style="width: 16px; height: 16px; margin-right: 6px;"></i>
                     Delete

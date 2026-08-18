@@ -4,14 +4,25 @@
 {% block content %}
 <div class="toolbar">
     <form method="GET" action="/stock" class="filter-bar">
-        <input type="text" name="q" class="form-control" placeholder="Search code, brand, size…" value="{{ filters.q }}" style="max-width:220px;">
-        <select name="category" class="form-control" style="max-width:160px;">
+        <input type="text" name="q" class="form-control" placeholder="Search code, brand, size…" value="{{ filters.q }}" style="max-width:200px;">
+        <select name="category" class="form-control" style="max-width:150px;">
             <option value="">All categories</option>
             {% for c in categories %}
             <option value="{{ c }}" {% if filters.category == c %}selected{% endif %}>{{ c }}</option>
             {% endfor %}
         </select>
-        <input type="text" name="brand" class="form-control" placeholder="Brand" value="{{ filters.brand }}" style="max-width:140px;">
+        <select name="type" class="form-control" style="max-width:140px;">
+            <option value="">All types</option>
+            {% for t in types %}
+            <option value="{{ t }}" {% if filters.type == t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="brand" class="form-control" placeholder="Brand" value="{{ filters.brand }}" style="max-width:120px;">
+        <select name="status" class="form-control" style="max-width:130px;">
+            <option value="">All Statuses</option>
+            <option value="Active" {% if filters.status == 'Active' %}selected{% endif %}>Active</option>
+            <option value="Inactive" {% if filters.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+        </select>
         <label class="check-inline"><input type="checkbox" name="low_stock" value="1" {% if filters.low_stock %}checked{% endif %}> Low stock only</label>
         <button type="submit" class="btn btn-secondary" style="width:auto;">Filter</button>
     </form>
@@ -48,7 +59,7 @@
                 <td>{% if item.status == 'Active' %}<span class="badge badge-success">Active</span>{% else %}<span class="badge badge-danger">{{ item.status }}</span>{% endif %}</td>
                 <td style="display:flex; gap:6px;">
                     <a href="/stock/{{ item.id }}/edit" class="btn btn-secondary" style="width:auto;padding:6px 10px;font-size:0.8rem;">Edit</a>
-                    <form action="/stock/{{ item.id }}/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <form action="/stock/{{ item.id }}/delete" method="POST" style="display:inline;" onsubmit="return confirmDelete(event, 'item');">
                         <button type="submit" class="btn" style="width:auto;padding:6px 10px;font-size:0.8rem;background-color:var(--error);color:white;">Delete</button>
                     </form>
                 </td>
