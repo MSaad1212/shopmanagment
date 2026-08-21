@@ -25,7 +25,7 @@
         .text-left { text-align: left; }
         .font-bold { font-weight: bold; }
         
-        .header { margin-bottom: 10px; }
+        .header { margin-bottom: 10px; text-align: center; }
         .header h1 { font-size: 16px; margin: 0 0 2px; }
         .header p { margin: 0; font-size: 12px; }
         
@@ -45,7 +45,7 @@
 </head>
 <body onload="window.print()">
     <div class="header">
-        <img src="/static/img/gas.png" alt="Logo" style="width: 48px; height: 48px; object-fit: contain; margin-bottom: 4px;">
+        <img src="/static/img/gas.png" alt="Logo" style="width: 48px; height: 48px; object-fit: contain; display: block; margin: 0 auto 4px;">
         <h2 class="store-name">{{ shop_name }}</h2>
         <p>{{ shop_tagline }}</p>
     </div>
@@ -70,7 +70,7 @@
             {% for line in sale.items %}
             <tr>
                 <td class="text-left">
-                    {{ line.item.item_code }}<br>
+                    {{ line.item.brand }}{% if line.item.size %} {{ line.item.size }}{% endif %}<br>
                     <small>{{ line.unit_price|float }}</small>
                 </td>
                 <td class="text-right">{{ line.quantity }}</td>
