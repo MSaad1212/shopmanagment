@@ -292,6 +292,7 @@ def update_customer(
     address: str = Form(""),
     vehicle_info: str = Form(""),
     status: str = Form("Active"),
+    current_balance: str = Form(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -300,6 +301,23 @@ def update_customer(
         raise HTTPException(404, "Customer not found")
     if not customer.is_walk_in:
         customer.name = name.strip()
+        if current_balance is not None:
+            new_bal = money(current_balance)
+            old_bal = money(customer.current_balance)
+            if new_bal != old_bal:
+                diff = new_bal - old_bal
+                debit_amt = diff if diff > 0 else Decimal("0")
+                credit_amt = -diff if diff < 0 else Decimal("0")
+                customer.current_balance = new_bal
+                db.add(CustomerLedger(
+                    customer_id=customer.id,
+                    date=date.today(),
+                    description="Balance Adjustment",
+                    debit=debit_amt,
+                    credit=credit_amt,
+                    balance=new_bal,
+                    reference_type="adjustment",
+                ))
     customer.phone = phone.strip() or None
     customer.address = address.strip() or None
     customer.vehicle_info = vehicle_info.strip() or None

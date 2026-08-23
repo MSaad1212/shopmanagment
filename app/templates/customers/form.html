@@ -17,6 +17,8 @@
             <div class="form-group" style="grid-column:1/-1;"><label>Address</label><textarea name="address" class="form-control" rows="2">{{ customer.address if customer and customer.address else '' }}</textarea></div>
             {% if not customer %}
             <div class="form-group"><label>Opening Balance (they owe)</label><input name="opening_balance" type="number" step="0.01" class="form-control" value="0"></div>
+            {% elif not customer.is_walk_in %}
+            <div class="form-group"><label>Current Balance (they owe)</label><input name="current_balance" type="number" step="0.01" class="form-control" value="{{ customer.current_balance }}"></div>
             {% endif %}
         </div>
         <div style="display:flex;gap:10px;margin-top:16px;">

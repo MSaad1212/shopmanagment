@@ -262,6 +262,7 @@ def update_supplier(
     phone: str = Form(""),
     address: str = Form(""),
     status: str = Form("Active"),
+    current_balance: str = Form(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -273,6 +274,25 @@ def update_supplier(
     supplier.phone = phone.strip() or None
     supplier.address = address.strip() or None
     supplier.status = status
+    
+    if current_balance is not None:
+        new_bal = money(current_balance)
+        old_bal = money(supplier.current_balance)
+        if new_bal != old_bal:
+            diff = new_bal - old_bal
+            debit_amt = diff if diff > 0 else Decimal("0")
+            credit_amt = -diff if diff < 0 else Decimal("0")
+            supplier.current_balance = new_bal
+            db.add(SupplierLedger(
+                supplier_id=supplier.id,
+                date=date.today(),
+                description="Balance Adjustment",
+                debit=debit_amt,
+                credit=credit_amt,
+                balance=new_bal,
+                reference_type="adjustment",
+            ))
+            
     db.commit()
     log_audit(db, current_user.id, "Update Supplier", f"Updated {supplier.supplier_code}")
     return RedirectResponse(url=f"/suppliers/{supplier_id}", status_code=303)
