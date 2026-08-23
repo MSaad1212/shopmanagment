@@ -138,6 +138,7 @@ async def create_sale(
     customer_id = int(form.get("customer_id"))
     sale_date = parse_date(form.get("date"))
     amount_received = money(form.get("amount_received") or 0)
+    discount = money(form.get("discount") or 0)
     payment_method = form.get("payment_method") or None
     note = form.get("note") or None
 
@@ -180,15 +181,16 @@ async def create_sale(
 
     invoice_no = next_code(db, Sale, "invoice_no", "SINV")
     
+    net_total = total - discount
     advance_available = Decimal("0")
     if customer.current_balance < 0:
         advance_available = abs(money(customer.current_balance))
     
-    advance_to_adjust = min(total - amount_received, advance_available)
+    advance_to_adjust = min(net_total - amount_received, advance_available)
     if advance_to_adjust < 0:
         advance_to_adjust = Decimal("0")
         
-    balance = total - amount_received - advance_to_adjust
+    balance = net_total - amount_received - advance_to_adjust
     
     if advance_to_adjust > 0:
         adjustment_msg = f"Rs. {advance_to_adjust} adjusted from account credit."
@@ -196,7 +198,7 @@ async def create_sale(
 
     sale = Sale(
         invoice_no=invoice_no, date=sale_date, customer_id=customer.id,
-        total_amount=total, amount_received=amount_received, balance=balance,
+        total_amount=total, discount=discount, amount_received=amount_received, balance=balance,
         payment_method=payment_method, note=note, created_by=current_user.id,
     )
     db.add(sale)
@@ -208,12 +210,15 @@ async def create_sale(
         apply_stock_change(db, item, -q, "sale", user_id=current_user.id, reference_type="sale", reference_id=sale.id, note=invoice_no)
 
     if not customer.is_walk_in:
-        add_customer_ledger(db, customer, sale_date, f"Sale {invoice_no}", debit=total, reference_type="sale", reference_id=sale.id)
+        desc = f"Sale {invoice_no}"
+        if discount > 0:
+            desc += f" (Disc: Rs. {discount})"
+        add_customer_ledger(db, customer, sale_date, desc, debit=net_total, reference_type="sale", reference_id=sale.id)
         if amount_received > 0:
             add_customer_ledger(db, customer, sale_date, f"Payment on {invoice_no}", credit=amount_received, reference_type="sale_payment", reference_id=sale.id)
 
     db.commit()
-    log_audit(db, current_user.id, "Create Sale", f"{invoice_no} total {total}")
+    log_audit(db, current_user.id, "Create Sale", f"{invoice_no} total {total} discount {discount}")
     return RedirectResponse(url=f"/customers/sales/{sale.id}", status_code=303)
 
 

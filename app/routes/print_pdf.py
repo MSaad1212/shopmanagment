@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
@@ -71,8 +72,23 @@ def print_sale_pos(sale_id: int, request: Request, current_user: User = Depends(
     sale = db.query(Sale).options(joinedload(Sale.customer), joinedload(Sale.items).joinedload(SaleItem.item)).filter(Sale.id == sale_id).first()
     if not sale:
         raise HTTPException(404)
+        
+    final_balance = Decimal("0")
+    previous_balance = Decimal("0")
+    if not sale.customer.is_walk_in:
+        ledger_entry = db.query(CustomerLedger).filter(
+            CustomerLedger.customer_id == sale.customer_id,
+            CustomerLedger.reference_id == sale.id,
+            CustomerLedger.reference_type.in_(["sale", "sale_payment"])
+        ).order_by(CustomerLedger.id.desc()).first()
+        if ledger_entry:
+            final_balance = ledger_entry.balance
+            net_change = (sale.total_amount - sale.discount) - sale.amount_received
+            previous_balance = final_balance - net_change
+            
     html_str = templates.get_template("print/sale_pos.html").render({
         "sale": sale, "shop_name": SHOP_NAME, "shop_tagline": SHOP_TAGLINE,
+        "previous_balance": previous_balance, "final_balance": final_balance,
         "today": date.today().strftime("%d-%b-%Y").lower(), "request": request
     })
     return HTMLResponse(content=html_str)

@@ -16,6 +16,17 @@ load_dotenv()
 try:
     Base.metadata.create_all(bind=engine)
     print("Database tables initialized successfully.")
+    
+    # Auto-migrate: ensure sales table has the discount column
+    from sqlalchemy import text
+    with engine.connect() as conn:
+        try:
+            conn.execute(text("ALTER TABLE sales ADD COLUMN discount DECIMAL(12, 2) NOT NULL DEFAULT 0.00;"))
+            conn.commit()
+            print("Discount column verified/added successfully to sales table.")
+        except Exception:
+            # Column already exists or error which we can ignore
+            pass
 except Exception as e:
     print(f"Error initializing database: {e}")
 

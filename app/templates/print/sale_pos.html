@@ -10,59 +10,76 @@
         }
         * {
             box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 700; /* Bold by default to print dark */
         }
         body {
             width: 80mm;
             margin: 0;
             padding: 4mm;
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.4;
             color: #000;
         }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; }
-        .font-bold { font-weight: bold; }
+        .font-bold { font-weight: 900; }
         
         .header { margin-bottom: 10px; text-align: center; }
-        .header h1 { font-size: 16px; margin: 0 0 2px; }
-        .header p { margin: 0; font-size: 12px; }
+        .header h2 { font-size: 18px; margin: 0 0 2px; font-weight: 900; }
+        .header p { margin: 0; font-size: 13px; }
         
-        .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
-        .solid-divider { border-bottom: 1px solid #000; margin: 8px 0; }
+        .divider { border-bottom: 2px dashed #000; margin: 8px 0; }
+        .solid-divider { border-bottom: 2px solid #000; margin: 8px 0; }
         
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 2px 0; vertical-align: top; }
-        th { border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 4px; }
+        th, td { padding: 3px 0; vertical-align: top; }
+        th { border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 4px; font-weight: 900; }
         
         .totals-table { margin-top: 8px; width: 100%; }
-        .totals-table td { padding: 2px 0; }
-        .grand-total { font-size: 14px; font-weight: bold; }
+        .totals-table td { padding: 3px 0; }
+        .grand-total { font-size: 15px; font-weight: 900; }
         
-        .footer { text-align: center; margin-top: 15px; font-size: 11px; }
+        .footer { text-align: center; margin-top: 15px; font-size: 12px; }
     </style>
 </head>
 <body onload="window.print()">
-    <div class="header">
-        <h2 class="store-name">{{ shop_name }}</h2>
-        <p>{{ shop_tagline }}</p>
+    <div class="header" style="margin-bottom: 6px;">
+        <h2 class="store-name" style="margin-bottom: 2px;">{{ shop_name }}</h2>
+        <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">Mobile: 0331-9542475</div>
+        <div style="font-size: 12px; font-weight: 700; line-height: 1.3;">
+            Old Khanna Road<br>
+            Rawalpindi near Hascol pump
+        </div>
+        <div class="solid-divider" style="margin: 6px 0 4px;"></div>
+        <h2 style="font-size: 16px; margin: 2px 0; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">Estimate</h2>
+        <div class="solid-divider" style="margin: 4px 0 6px;"></div>
     </div>
     
-    <div class="text-left">
-        <div><span class="font-bold">Invoice:</span> #{{ sale.invoice_no }}</div>
-        <div><span class="font-bold">Date:</span> {{ sale.date }}</div>
+    <div style="font-size: 12px; margin-bottom: 4px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 4px;">
+            <tr>
+                <td style="width: 38%; padding: 1px 0;"><span class="font-bold">SI:</span> #{{ sale.invoice_no }}</td>
+                <td style="width: 34%; padding: 1px 0; text-align: center;"><span class="font-bold">Date:</span> {{ sale.date }}</td>
+                <td style="width: 28%; padding: 1px 0; text-align: right;"><span class="font-bold">Time:</span> {% if sale.created_at is string %}{{ sale.created_at }}{% elif sale.created_at %}{{ sale.created_at.strftime('%I:%M %p') }}{% endif %}</td>
+            </tr>
+        </table>
+        <div class="divider" style="margin: 4px 0;"></div>
         <div><span class="font-bold">Customer:</span> {{ sale.customer.name }}</div>
+        {% if sale.customer.phone %}
+        <div><span class="font-bold">Phone:</span> {{ sale.customer.phone }}</div>
+        {% endif %}
     </div>
     
-    <div class="divider"></div>
+    <div class="divider" style="margin: 4px 0 8px;"></div>
     
     <table>
         <thead>
             <tr>
-                <th class="text-left">Item</th>
-                <th class="text-right">Qty</th>
-                <th class="text-right">Amount</th>
+                <th class="text-left" style="font-weight: 900;">Item</th>
+                <th class="text-right" style="font-weight: 900;">Qty</th>
+                <th class="text-right" style="font-weight: 900;">Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -79,33 +96,58 @@
         </tbody>
     </table>
     
-    <div class="solid-divider"></div>
+    <div class="solid-divider" style="margin: 4px 0 8px;"></div>
     
-    <table class="totals-table">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 4px;">
         <tr>
-            <td class="text-left">Subtotal</td>
-            <td class="text-right">{{ sale.total_amount|float }}</td>
-        </tr>
-        <tr>
-            <td class="text-left">Received</td>
-            <td class="text-right">{{ sale.amount_received|float }}</td>
-        </tr>
-        {% set advance_adjusted = sale.total_amount - sale.amount_received - sale.balance %}
-        {% if advance_adjusted > 0 %}
-        <tr>
-            <td class="text-left">Account Credit</td>
-            <td class="text-right">{{ advance_adjusted|float }}</td>
-        </tr>
-        {% endif %}
-        <tr class="grand-total">
-            <td class="text-left">Balance Due</td>
-            <td class="text-right">{{ sale.balance|float }}</td>
+            <!-- Left Column: Total Qty and Urdu Notice -->
+            <td style="width: 45%; vertical-align: top; text-align: left; padding-right: 6px;">
+                <div style="border: 2px solid #000; padding: 4px; text-align: center; border-radius: 8px; margin-bottom: 6px;">
+                    <div style="font-size: 11px; text-transform: uppercase;">Total Qty</div>
+                    <div style="font-size: 16px; font-weight: 900;">{{ sale.items|sum(attribute='quantity') }}</div>
+                </div>
+                <div style="font-size: 14px; font-weight: 900; line-height: 1.4; text-align: center; margin-top: 10px; direction: rtl; font-family: 'Jameel Noori Nastaleeq', 'Urdu Typesetting', 'Nafees', Arial, sans-serif;">
+                    لوکل سامان کی<br>گارنٹی نہیں ہوگی۔
+                </div>
+            </td>
+            
+            <!-- Right Column: Balance and totals -->
+            <td style="width: 55%; vertical-align: top; border-left: 2px solid #000; padding-left: 6px;">
+                <table class="totals-table" style="margin-top: 0; font-size: 12px; width: 100%;">
+                    <tr>
+                        <td class="text-left" style="padding: 1px 0; font-weight: 700;">Total:</td>
+                        <td class="text-right" style="padding: 1px 0; font-weight: 700;">{{ sale.total_amount|float }}</td>
+                    </tr>
+                    {% if sale.discount and sale.discount > 0 %}
+                    <tr>
+                        <td class="text-left" style="padding: 1px 0; font-weight: 700;">Disc:</td>
+                        <td class="text-right" style="padding: 1px 0; font-weight: 700;">-{{ sale.discount|float }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr style="border-top: 1px dashed #000; border-bottom: 1px dashed #000;">
+                        <td class="text-left" style="padding: 2px 0; font-weight: 900;">Grand Total:</td>
+                        <td class="text-right" style="padding: 2px 0; font-weight: 900;">{{ (sale.total_amount - sale.discount)|float }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" style="padding: 1px 0; font-weight: 700;">Received:</td>
+                        <td class="text-right" style="padding: 1px 0; font-weight: 700;">{{ sale.amount_received|float }}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" style="padding: 1px 0; font-weight: 700;">Prev. Bal:</td>
+                        <td class="text-right" style="padding: 1px 0; font-weight: 700;">{{ previous_balance|float }}</td>
+                    </tr>
+                    <tr class="grand-total" style="border-top: 2px solid #000; font-size: 14px;">
+                        <td class="text-left" style="padding: 3px 0; font-weight: 900;">Final Bal:</td>
+                        <td class="text-right" style="padding: 3px 0; font-weight: 900;">{{ final_balance|float }}</td>
+                    </tr>
+                </table>
+            </td>
         </tr>
     </table>
     
-    <div class="divider"></div>
+    <div class="divider" style="margin: 8px 0;"></div>
     
-    <div class="footer">
+    <div class="footer" style="text-align: center; font-size: 11px;">
         Thank you for your business!<br>
         <small>System generated receipt.</small>
     </div>

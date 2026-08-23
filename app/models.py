@@ -167,6 +167,7 @@ class Sale(Base):
     date = Column(Date, nullable=False)
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     total_amount = Column(Numeric(12, 2), default=0, nullable=False)
+    discount = Column(Numeric(12, 2), default=0, nullable=False)
     amount_received = Column(Numeric(12, 2), default=0, nullable=False)
     balance = Column(Numeric(12, 2), default=0, nullable=False)
     payment_method = Column(String(30), nullable=True)

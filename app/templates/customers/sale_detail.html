@@ -8,16 +8,22 @@
             <h3 style="margin-bottom: 6px; font-size: 1.25rem; color: var(--text-primary);">{{ sale.customer.name }}</h3>
             <p style="color:var(--text-secondary); font-size: 0.95rem;">Date: {{ sale.date }}</p>
             
-            <div style="display: flex; gap: 32px; margin-top: 24px;">
+            <div style="display: flex; gap: 32px; margin-top: 24px; flex-wrap: wrap;">
                 <div>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Total</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Subtotal</p>
                     <p style="font-size: 1.35rem; font-weight: 700; color: var(--text-primary);">Rs. {{ '%.2f'|format(sale.total_amount|float) }}</p>
                 </div>
+                {% if sale.discount and sale.discount > 0 %}
+                <div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Discount</p>
+                    <p style="font-size: 1.35rem; font-weight: 700; color: var(--error);">Rs. {{ '%.2f'|format(sale.discount|float) }}</p>
+                </div>
+                {% endif %}
                 <div>
                     <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Received</p>
                     <p style="font-size: 1.35rem; font-weight: 600; color: var(--success);">Rs. {{ '%.2f'|format(sale.amount_received|float) }}</p>
                 </div>
-                {% set advance_adjusted = sale.total_amount - sale.amount_received - sale.balance %}
+                {% set advance_adjusted = sale.total_amount - (sale.discount|default(0)) - sale.amount_received - sale.balance %}
                 {% if advance_adjusted > 0 %}
                 <div>
                     <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 4px;">Account Credit Applied</p>
@@ -40,7 +46,7 @@
             {% else %}
                 {% set wa_phone = phone %}
             {% endif %}
-            {% set wa_msg = "Hello " ~ sale.customer.name ~ ", your invoice %23" ~ sale.invoice_no ~ " for Rs. " ~ sale.total_amount ~ " is ready." %}
+            {% set wa_msg = "Hello " ~ sale.customer.name ~ ", your invoice %23" ~ sale.invoice_no ~ " for Rs. " ~ '%.2f'|format((sale.total_amount - (sale.discount|default(0)))|float) ~ " is ready." %}
             <a href="https://wa.me/{{ wa_phone }}?text={{ wa_msg }}" target="_blank" class="btn btn-secondary" style="width:auto; padding: 10px 16px; border-color: #25D366; color: #25D366;">
                 <i data-lucide="message-circle" style="width: 18px; height: 18px; margin-right: 6px;"></i> WhatsApp
             </a>

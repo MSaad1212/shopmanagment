@@ -369,16 +369,21 @@
                 <td>Subtotal</td>
                 <td class="right">Rs. {{ '%.2f'|format(sale.total_amount|float) }}</td>
             </tr>
+            {% if sale.discount and sale.discount > 0 %}
+            <tr>
+                <td>Discount</td>
+                <td class="right" style="color: #ef4444;">- Rs. {{ '%.2f'|format(sale.discount|float) }}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <td>Amount Received</td>
                 <td class="right">Rs. {{ '%.2f'|format(sale.amount_received|float) }}</td>
             </tr>
-            {% set advance_adjusted = sale.total_amount - sale.amount_received - sale.balance %}
+            {% set advance_adjusted = sale.total_amount - (sale.discount|default(0)) - sale.amount_received - sale.balance %}
             {% if advance_adjusted > 0 %}
             <tr>
                 <td>Account Credit Applied</td>
-                <td class="right" style="color: #059669; font-weight: 500;">Rs. {{ '%.2f'|format(advance_adjusted|float)
-                    }}</td>
+                <td class="right" style="color: #059669; font-weight: 500;">Rs. {{ '%.2f'|format(advance_adjusted|float) }}</td>
             </tr>
             {% endif %}
             <tr class="balance-row">

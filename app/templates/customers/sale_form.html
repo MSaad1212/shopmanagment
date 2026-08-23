@@ -17,6 +17,7 @@
         </div>
         <div class="form-group"><label>Date *</label><input type="date" name="date" class="form-control" value="{{ today }}" required></div>
         <div class="form-group"><label>Amount Received Now</label><input type="number" step="0.01" name="amount_received" class="form-control" value="0"></div>
+        <div class="form-group"><label>Discount Amount</label><input type="number" step="0.01" name="discount" class="form-control" value="0"></div>
         <div class="form-group">
             <label>Payment Method</label>
             <select name="payment_method" class="form-control">
@@ -67,8 +68,9 @@ function calculateTotals() {
         const price = parseFloat(row.querySelector('.price-input').value) || 0;
         total += (qty * price);
     });
+    const discount = parseFloat(document.querySelector('input[name="discount"]').value) || 0;
     const received = parseFloat(document.querySelector('input[name="amount_received"]').value) || 0;
-    const balance = total - received;
+    const balance = total - discount - received;
     
     document.getElementById('display-total').textContent = total.toFixed(2);
     const balEl = document.getElementById('display-balance');
@@ -77,6 +79,7 @@ function calculateTotals() {
 }
 
 document.querySelector('input[name="amount_received"]').addEventListener('input', calculateTotals);
+document.querySelector('input[name="discount"]').addEventListener('input', calculateTotals);
 
 document.getElementById('customer-select').addEventListener('change', function(e) {
     const opt = e.target.selectedOptions[0];
