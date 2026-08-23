@@ -38,7 +38,7 @@
                         <select name="item_id" class="form-control" required>
                             <option value="">Select…</option>
                             {% for i in items %}
-                            <option value="{{ i.id }}" data-price="{{ i.sale_price }}">{{ i.item_code }} — {{ i.brand }}</option>
+                            <option value="{{ i.id }}" data-price="{{ i.sale_price }}">{{ i.item_code }} — {{ i.brand }}{% if i.pattern %} {{ i.pattern }}{% endif %}{% if i.size %} {{ i.size }}{% endif %}</option>
                             {% endfor %}
                         </select>
                     </td>

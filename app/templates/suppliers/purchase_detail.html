@@ -39,7 +39,7 @@
         <tbody>
             {% for line in purchase.items %}
             <tr>
-                <td style="font-weight: 500;">{{ line.item.item_code }} <span style="color: var(--text-muted); font-weight: 400; margin-left: 8px;">{{ line.item.brand }}</span></td>
+                <td style="font-weight: 500;">{{ line.item.item_code }} <span style="color: var(--text-muted); font-weight: 400; margin-left: 8px;">{{ line.item.brand }}{% if line.item.pattern %} &bull; {{ line.item.pattern }}{% endif %}{% if line.item.size %} &bull; {{ line.item.size }}{% endif %}</span></td>
                 <td>{{ line.quantity }}</td>
                 <td>Rs. {{ '%.2f'|format(line.unit_price|float) }}</td>
                 <td style="font-weight: 600;">Rs. {{ '%.2f'|format(line.subtotal|float) }}</td>

@@ -139,7 +139,9 @@
         <tbody>
             {% for line in ret.items %}
             <tr>
-                <td style="font-weight: 500; color: #0f172a;">{{ line.item.item_code if line.item else line.item_id }}</td>
+                <td style="font-weight: 500; color: #0f172a;">{{ line.item.item_code if line.item else line.item_id }}
+                    {% if line.item %}<div style="color: #64748b; font-size: 8.5pt; font-weight: 400; margin-top: 2px;">{{ line.item.brand }}{% if line.item.pattern %} &bull; {{ line.item.pattern }}{% endif %}{% if line.item.size %} &bull; {{ line.item.size }}{% endif %}</div>{% endif %}
+                </td>
                 <td class="right">{{ line.quantity }}</td>
                 <td class="right">Rs. {{ '%.2f'|format(line.unit_price|float) }}</td>
                 <td class="right amt-balance">Rs. {{ '%.2f'|format(line.subtotal|float) }}</td>

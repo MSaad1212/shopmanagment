@@ -41,7 +41,7 @@
                         <select name="item_id" class="form-control item-select" required>
                             <option value="">Select item…</option>
                             {% for i in items %}
-                            <option value="{{ i.id }}" data-price="{{ i.sale_price }}" data-stock="{{ i.current_stock }}">{{ i.item_code }} — {{ i.brand }} {{ i.size or '' }} (stock {{ i.current_stock }})</option>
+                            <option value="{{ i.id }}" data-price="{{ i.sale_price }}" data-stock="{{ i.current_stock }}">{{ i.item_code }} — {{ i.brand }}{% if i.pattern %} {{ i.pattern }}{% endif %}{% if i.size %} {{ i.size }}{% endif %} (stock {{ i.current_stock }})</option>
                             {% endfor %}
                         </select>
                     </td>

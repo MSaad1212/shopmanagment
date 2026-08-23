@@ -70,7 +70,7 @@
             {% for line in sale.items %}
             <tr>
                 <td class="text-left">
-                    {{ line.item.brand }}{% if line.item.size %} {{ line.item.size }}{% endif %}<br>
+                    {{ line.item.brand }}{% if line.item.pattern %} {{ line.item.pattern }}{% endif %}{% if line.item.size %} {{ line.item.size }}{% endif %}<br>
                     <small>{{ line.unit_price|float }}</small>
                 </td>
                 <td class="text-right">{{ line.quantity }}</td>
