@@ -632,6 +632,9 @@ textarea.form-control {
     .main-content {
         margin-left: 72px;
     }
+    .top-nav {
+        padding: 0 20px;
+    }
     .content-body {
         padding: 24px;
     }
@@ -640,6 +643,37 @@ textarea.form-control {
         align-items: flex-start;
     }
 }
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 60px;
+    }
+    .sidebar-brand img {
+        width: 24px !important;
+        height: 24px !important;
+    }
+    .nav-item {
+        padding: 10px;
+    }
+    .main-content {
+        margin-left: 60px;
+    }
+    .top-nav {
+        padding: 0 12px;
+        height: 60px;
+    }
+    .top-nav-right {
+        display: none; /* Hide profile text on very small screens to fit title */
+    }
+    .content-body {
+        padding: 12px;
+    }
+    .glass-panel {
+        padding: 16px !important;
+        border-radius: var(--border-radius);
+    }
+}
+
 
 /* Premium SweetAlert2 Styling */
 .swal-premium-popup {

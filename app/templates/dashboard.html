@@ -12,51 +12,51 @@
         <nav class="sidebar-nav">
             <a href="/" class="nav-item {% if active_tab == 'dashboard' %}active{% endif %}">
                 <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
-                Dashboard
+                <span>Dashboard</span>
             </a>
             <a href="/stock" class="nav-item {% if active_tab == 'stock' %}active{% endif %}">
                 <i data-lucide="package" style="width: 18px; height: 18px;"></i>
-                Stock / Inventory
+                <span>Stock / Inventory</span>
             </a>
             <a href="/suppliers" class="nav-item {% if active_tab == 'suppliers' %}active{% endif %}">
                 <i data-lucide="truck" style="width: 18px; height: 18px;"></i>
-                Suppliers
+                <span>Suppliers</span>
             </a>
             <a href="/customers" class="nav-item {% if active_tab == 'customers' and '/sales' not in request.url.path %}active{% endif %}">
                 <i data-lucide="users-2" style="width: 18px; height: 18px;"></i>
-                Customers
+                <span>Customers</span>
             </a>
             <a href="/customers/sales" class="nav-item {% if '/customers/sales' in request.url.path %}active{% endif %}">
                 <i data-lucide="file-text" style="width: 18px; height: 18px;"></i>
-                Invoices
+                <span>Invoices</span>
             </a>
             <a href="/returns" class="nav-item {% if active_tab == 'returns' %}active{% endif %}">
                 <i data-lucide="refresh-cw" style="width: 18px; height: 18px;"></i>
-                Returns Dashboard
+                <span>Returns Dashboard</span>
             </a>
             <a href="/ledger" class="nav-item {% if active_tab == 'ledger' %}active{% endif %}">
                 <i data-lucide="landmark" style="width: 18px; height: 18px;"></i>
-                General Ledger
+                <span>General Ledger</span>
             </a>
             <a href="/reports" class="nav-item {% if active_tab == 'reports' %}active{% endif %}">
                 <i data-lucide="bar-chart-3" style="width: 18px; height: 18px;"></i>
-                Reports
+                <span>Reports</span>
             </a>
             <a href="/users" class="nav-item {% if active_tab == 'users' %}active{% endif %}">
                 <i data-lucide="user-cog" style="width: 18px; height: 18px;"></i>
-                User Accounts
+                <span>User Accounts</span>
             </a>
             <a href="/audit-log" class="nav-item {% if active_tab == 'audit' %}active{% endif %}">
                 <i data-lucide="scroll-text" style="width: 18px; height: 18px;"></i>
-                Audit Log
+                <span>Audit Log</span>
             </a>
             <a href="/profile" class="nav-item {% if active_tab == 'profile' %}active{% endif %}">
                 <i data-lucide="user" style="width: 18px; height: 18px;"></i>
-                My Profile
+                <span>My Profile</span>
             </a>
             <a href="/settings" class="nav-item {% if active_tab == 'settings' %}active{% endif %}">
                 <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
-                Settings
+                <span>Settings</span>
             </a>
         </nav>
         <div class="sidebar-footer">
