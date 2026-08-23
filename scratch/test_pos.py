@@ -3,7 +3,6 @@ import sys
 from decimal import Decimal
 from fastapi.templating import Jinja2Templates
 
-# Create a mock Sale class
 class MockItem:
     def __init__(self, brand, pattern, size):
         self.brand = brand
@@ -27,7 +26,7 @@ class MockSale:
     def __init__(self):
         self.invoice_no = "SINV-1002"
         self.date = "2026-08-23"
-        self.created_at = None  # test None
+        self.created_at = None
         self.customer = MockCustomer("Test Customer", "0333-1234567", False)
         self.total_amount = Decimal("1500.00")
         self.discount = Decimal("100.00")
@@ -41,13 +40,10 @@ class MockSale:
 def test_render():
     try:
         sale = MockSale()
-        print(f"Testing mock render for Invoice: {sale.invoice_no}")
-        
         previous_balance = Decimal("200.00")
         final_balance = Decimal("200.00")
         
         templates = Jinja2Templates(directory="app/templates")
-        
         html_content = templates.get_template("print/sale_pos.html").render({
             "sale": sale,
             "shop_name": "New Metro Traders",
@@ -57,12 +53,12 @@ def test_render():
             "today": "23-aug-2026",
             "request": None
         })
-        print("SUCCESS: Template rendered successfully!")
-        print("HTML Output Length:", len(html_content))
+        
+        with open("scratch/output.html", "w", encoding="utf-8") as f:
+            f.write(html_content)
+        print("HTML written to scratch/output.html")
     except Exception as e:
-        print("FAILED: Rendering failed with error:")
-        import traceback
-        traceback.print_exc()
+        print("Failed:", e)
 
 if __name__ == "__main__":
     test_render()
