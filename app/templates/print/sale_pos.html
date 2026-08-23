@@ -6,42 +6,41 @@
     <style>
         @page {
             margin: 0;
+            size: 80mm auto;
         }
         * {
             box-sizing: border-box;
-            font-family: Arial, Helvetica, sans-serif;
-            font-weight: 700; /* Bold by default to print dark */
+            font-family: 'Courier New', Courier, monospace;
         }
         body {
-            width: 100%;
-            max-width: 280px;
-            margin: 0 auto;
-            padding: 8px;
-            font-size: 13px;
+            width: 80mm;
+            margin: 0;
+            padding: 4mm;
+            font-size: 12px;
             line-height: 1.4;
             color: #000;
         }
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .text-left { text-align: left; }
-        .font-bold { font-weight: 900; }
+        .font-bold { font-weight: bold; }
         
         .header { margin-bottom: 10px; text-align: center; }
-        .header h2 { font-size: 18px; margin: 0 0 2px; font-weight: 900; }
-        .header p { margin: 0; font-size: 13px; }
+        .header h2 { font-size: 16px; margin: 0 0 2px; font-weight: bold; }
+        .header p { margin: 0; font-size: 12px; }
         
-        .divider { border-bottom: 2px dashed #000; margin: 8px 0; }
-        .solid-divider { border-bottom: 2px solid #000; margin: 8px 0; }
+        .divider { border-bottom: 1px dashed #000; margin: 8px 0; }
+        .solid-divider { border-bottom: 1px solid #000; margin: 8px 0; }
         
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 3px 0; vertical-align: top; }
-        th { border-bottom: 2px solid #000; padding-bottom: 4px; margin-bottom: 4px; font-weight: 900; }
+        th, td { padding: 2px 0; vertical-align: top; }
+        th { border-bottom: 1px dashed #000; padding-bottom: 4px; margin-bottom: 4px; }
         
         .totals-table { margin-top: 8px; width: 100%; }
-        .totals-table td { padding: 3px 0; }
-        .grand-total { font-size: 15px; font-weight: 900; }
+        .totals-table td { padding: 2px 0; }
+        .grand-total { font-size: 14px; font-weight: bold; }
         
-        .footer { text-align: center; margin-top: 15px; font-size: 12px; }
+        .footer { text-align: center; margin-top: 15px; font-size: 11px; }
     </style>
 </head>
 <body onload="window.print()">
