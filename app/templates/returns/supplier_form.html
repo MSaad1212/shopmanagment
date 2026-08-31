@@ -35,7 +35,7 @@
             <tbody id="lines-body">
                 <tr class="line-row">
                     <td>
-                        <select name="item_id" class="form-control" required>
+                        <select name="item_id" class="form-control item-select" required>
                             <option value="">Select…</option>
                             {% for i in items %}
                             <option value="{{ i.id }}" data-price="{{ i.purchase_price }}">{{ i.brand }}{% if i.pattern %} {{ i.pattern }}{% endif %}{% if i.size %} {{ i.size }}{% endif %}</option>
@@ -62,12 +62,30 @@
 </form>
 </div>
 <script>
+// Initialize searchable select on page load
+document.querySelectorAll('.item-select').forEach(initSearchableSelect);
+
 document.getElementById('add-line').addEventListener('click', function() {
     const body = document.getElementById('lines-body');
     const row = body.querySelector('.line-row').cloneNode(true);
+    
+    // Clean up cloned searchable select elements
+    const wrapper = row.querySelector('.searchable-select-wrapper');
+    if (wrapper) wrapper.remove();
+    
+    const select = row.querySelector('.item-select');
+    if (select) {
+        select.style.display = '';
+        select.selectedIndex = 0;
+    }
+    
     row.querySelectorAll('input').forEach(i => { if (i.name==='quantity') i.value=1; else if (i.name==='unit_price') i.value=0; });
-    row.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+    row.querySelectorAll('select').forEach(s => { if (s !== select) s.selectedIndex = 0; });
     body.appendChild(row);
+    
+    if (select) {
+        initSearchableSelect(select);
+    }
 });
 document.getElementById('lines-body').addEventListener('click', function(e) {
     if (e.target.classList.contains('remove-line') && document.querySelectorAll('.line-row').length > 1) e.target.closest('tr').remove();
